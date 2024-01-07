@@ -1,5 +1,5 @@
 [package]
-name = "ddos_bounce"
+name = "DRDos"
 version = "0.1.0"
 edition = "2021"
 
