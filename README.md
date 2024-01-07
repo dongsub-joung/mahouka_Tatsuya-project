@@ -1,2 +1,2 @@
-# Tatsuya_shiba-project
+# mahouka_Tatsuya-project
 hacking tools written rust
