@@ -1,3 +1,4 @@
+use std::{io::{stdin, BufRead, self, ErrorKind}, error};
 
 pub fn show_logo(){
     println!("--------------------------------------------------------------");
@@ -8,4 +9,14 @@ pub fn show_logo(){
     println!("   88    88   88    88    db   8D 88b  d88    88    88   88 ");
     println!("   YP    YP   YP    YP    `8888Y' ~Y8888P'    YP    YP   YP ");
     println!("--------------------------------------------------------------");
+}
+
+pub fn get_input_data()-> Result<String, std::io::Error>{
+    let std= stdin();
+    let mut buf= std.lock().lines();
+    let option_number= buf.next().unwrap()?;
+    let number= match option_number {
+        n => return Ok(n),
+        _=> return Err(io::Error::new(ErrorKind::InvalidData, "invalid data")),
+    };
 }
