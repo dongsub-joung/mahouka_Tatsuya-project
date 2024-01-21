@@ -1,3 +1,3 @@
 pub fn init(){
-    println!("{}", "MDNS reflection attacking");
+    println!("MDNS reflection attacking");
 }
