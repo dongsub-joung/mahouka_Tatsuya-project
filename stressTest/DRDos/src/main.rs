@@ -3,6 +3,7 @@ use std::net::Ipv4Addr;
 mod utils;
 mod tcp_middlebox;
 mod mdns;
+mod cldap;
 
 struct Net{
     ip: Ipv4Addr,
@@ -25,6 +26,7 @@ fn main(){
         println!("1. Set the target Infomation and attack count");
         println!("2. MDSN protocol attack");
         println!("3. TCP middlebox reflection attack");
+        println!("4. CLDAP reflection attack");
         println!("ip:{}", target_info.ip);
         println!("times:{}", target_info.times);
         println!("99. Exit");
@@ -43,6 +45,7 @@ fn main(){
             }
             2 => tcp_middlebox::init(),
             3 => mdns::init(),
+            4 => cldap::init(),
             99 => break,
             _ => continue
         }
