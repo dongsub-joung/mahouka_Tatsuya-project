@@ -13,11 +13,9 @@ impl Net {
         Self { ip: Ipv4Addr::new(196, 0, 0, 1), times: 0 }
     }
     pub fn set_target(ip: String, times: usize) -> Self{
-        let mut ip_chars: Vec<u8>= ip.trim().split_whitespace()
-            .map(|f| f.parse().unwrap()).collect();
-        let (a,b,c,d)= (ip_chars[0], ip_chars[1], ip_chars[2], ip_chars[3]); 
+        let ip_chars: Ipv4Addr= ip.trim().parse().unwrap();
 
-        Self { ip: Ipv4Addr::new(a, b, c, d), times }
+        Self { ip: Ipv4Addr::from(ip_chars), times }
     }
 }
 fn main(){
