@@ -43,8 +43,8 @@ fn main(){
                     .trim().parse().unwrap();
                 target_info= Net::set_target(ip, times);
             }
-            2 => tcp_middlebox::init(),
-            3 => mdns::init(),
+            2 => mdns::init(),
+            3 => tcp_middlebox::init(),
             4 => cldap::init(),
             99 => break,
             _ => continue
