@@ -13,7 +13,10 @@ async fn main() ->  Result<(),  Box<dyn Error>>{
 
 
     // @todo3 or conn Tor Bridge 
+
     
+    // @todo4 miss-authentication application layer 
+
     
     utils::show_logo();
 
