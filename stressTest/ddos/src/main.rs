@@ -6,7 +6,7 @@ mod utils;
 
 #[tokio::main]
 async fn main() ->  Result<(),  Box<dyn Error>>{
-    // @todo mac address changer(interval 10min) 
+    // @todo mac address changer(interval 600s) 
     
     
     // @todo2 Shuffle network Node(If you have some nodes)
