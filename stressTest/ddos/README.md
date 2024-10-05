@@ -3,3 +3,8 @@
 
 # Source
 pic: https://medium.com/@tommasobona04/how-to-code-a-dos-attack-in-python-by-tommaso-bona-b5387fc9c573
+
+
+# Fake mac changer
+
+- https://medium.com/@audiq4456/mac-address-changer-in-rust-for-security-researchers-957e6351482a  
