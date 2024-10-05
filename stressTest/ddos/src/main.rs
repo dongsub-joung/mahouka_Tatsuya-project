@@ -6,8 +6,17 @@ mod utils;
 
 #[tokio::main]
 async fn main() ->  Result<(),  Box<dyn Error>>{
-    utils::show_logo();
+    // @todo mac address chaner
     
+    
+    // @todo2 Shuffle network Node
+
+
+    // @todo3 or conn Tor Bridge 
+    
+    
+    utils::show_logo();
+
     let site= ".example.com";
     let url: String= format!("https://www.{site}");
     let times= 2;
