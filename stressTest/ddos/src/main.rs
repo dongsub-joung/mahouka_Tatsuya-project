@@ -10,7 +10,8 @@ async fn main() ->  Result<(),  Box<dyn Error>>{
     // https://www.linuxquestions.org/questions/programming-9/how-to-change-mac-addres-via-c-code-801613/
     // https://www.darpa.mil/program/translating-all-c-to-rust
     // https://learn.microsoft.com/en-us/windows/dev-environment/rust/rust-for-windows
-
+    // https://microsoft.github.io/windows-docs-rs/doc/windows/Networking/Sockets/index.html
+    
     
     // @todo2 Shuffle network Node(If you have some nodes)
     // > https://docs.rs/nix/latest/nix/sys/socket/index.html
