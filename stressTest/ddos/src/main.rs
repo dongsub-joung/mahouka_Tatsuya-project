@@ -13,12 +13,17 @@ async fn main() ->  Result<(),  Box<dyn Error>>{
 
     
     // @todo2 Shuffle network Node(If you have some nodes)
-
+    // > https://docs.rs/nix/latest/nix/sys/socket/index.html
+    // > https://learn.microsoft.com/en-us/azure/aks/virtual-nodes
 
     // @todo3 or conn Tor Bridge(default)
+    // > https://zolagonano.github.io/blog/posts/making-a-tor-bridgedb-cli-interface-with-rust
+    // > https://github.com/zolagonano/torbridge-cli
 
 
     // @todo4 miss-authentication application layer(if you need) 
+
+
 
     
     utils::show_logo();
