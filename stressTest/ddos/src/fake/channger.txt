@@ -1,0 +1,100 @@
+use rand::{Rng};
+use std::{io, process::Command, time::Duration};
+
+fn fade_out_text(text: &str) {
+
+
+    println!("{}", text);
+}
+
+#[tokio::main]
+async fn main() {               //this is the main function
+        fade_out_text(r#"
+
+     ___      .__   __.  __    __   _______  __   _______  _______     .___  ___.      ___       ______      ______  __    __       ___      .__   __.   _______  _______ .______
+    /   \     |  \ |  | |  |  |  | |   ____||  | |   ____||       \    |   \/   |     /   \     /      |    /      ||  |  |  |     /   \     |  \ |  |  /  _____||   ____||   _  \
+   /  ^  \    |   \|  | |  |  |  | |  |__   |  | |  |__   |  .--.  |   |  \  /  |    /  ^  \   |  ,----'   |  ,----'|  |__|  |    /  ^  \    |   \|  | |  |  __  |  |__   |  |_)  |
+  /  /_\  \   |  . `  | |  |  |  | |   __|  |  | |   __|  |  |  |  |   |  |\/|  |   /  /_\  \  |  |        |  |     |   __   |   /  /_\  \   |  . `  | |  | |_ | |   __|  |      /
+ /  _____  \  |  |\   | |  `--'  | |  |     |  | |  |____ |  '--'  |   |  |  |  |  /  _____  \ |  `----.   |  `----.|  |  |  |  /  _____  \  |  |\   | |  |__| | |  |____ |  |\  \----.
+/__/     \__\ |__| \__|  \______/  |__|     |__| |_______||_______/    |__|  |__| /__/     \__\ \______|    \______||__|  |__| /__/     \__\ |__| \__|  \______| |_______|| _| `._____|
+
+
+        "#);
+
+
+    println!("Please ensure you are running this program with 'sudo' for the necessary permissions.");
+    println!("Enter the network interface name:");
+
+    let mut interface = String::new();
+    io::stdin()
+        .read_line(&mut interface)
+        .expect("Failed to read line");
+    interface = interface.trim().to_string();
+    println!("Enter duration between MAC address changes (in seconds):");
+    let mut duration = String::new();
+    io::stdin()
+        .read_line(&mut duration)
+        .expect("Failed to read line");
+    let duration: f64 = duration.trim().parse().expect("Please enter a valid number");
+
+    loop {
+        let new_mac = generate_random_mac();
+        println!("Changing MAC address to: {}", new_mac);
+        change_mac_address(&interface, &new_mac);
+
+        tokio::time::sleep(Duration::from_secs(duration as u64)).await;
+    }
+}
+
+// # Ref
+// 1. https://medium.com/@audiq4456/mac-address-changer-in-rust-for-security-researchers-957e6351482a
+use rand::{Rng};
+use std::{io, process::Command, time::Duration};
+
+fn fade_out_text(text: &str) {
+
+
+    println!("{}", text);
+}
+
+#[tokio::main]
+async fn main() {               //this is the main function
+        fade_out_text(r#"
+
+     ___      .__   __.  __    __   _______  __   _______  _______     .___  ___.      ___       ______      ______  __    __       ___      .__   __.   _______  _______ .______
+    /   \     |  \ |  | |  |  |  | |   ____||  | |   ____||       \    |   \/   |     /   \     /      |    /      ||  |  |  |     /   \     |  \ |  |  /  _____||   ____||   _  \
+   /  ^  \    |   \|  | |  |  |  | |  |__   |  | |  |__   |  .--.  |   |  \  /  |    /  ^  \   |  ,----'   |  ,----'|  |__|  |    /  ^  \    |   \|  | |  |  __  |  |__   |  |_)  |
+  /  /_\  \   |  . `  | |  |  |  | |   __|  |  | |   __|  |  |  |  |   |  |\/|  |   /  /_\  \  |  |        |  |     |   __   |   /  /_\  \   |  . `  | |  | |_ | |   __|  |      /
+ /  _____  \  |  |\   | |  `--'  | |  |     |  | |  |____ |  '--'  |   |  |  |  |  /  _____  \ |  `----.   |  `----.|  |  |  |  /  _____  \  |  |\   | |  |__| | |  |____ |  |\  \----.
+/__/     \__\ |__| \__|  \______/  |__|     |__| |_______||_______/    |__|  |__| /__/     \__\ \______|    \______||__|  |__| /__/     \__\ |__| \__|  \______| |_______|| _| `._____|
+
+
+        "#);
+
+
+    println!("Please ensure you are running this program with 'sudo' for the necessary permissions.");
+    println!("Enter the network interface name:");
+
+    let mut interface = String::new();
+    io::stdin()
+        .read_line(&mut interface)
+        .expect("Failed to read line");
+    interface = interface.trim().to_string();
+    println!("Enter duration between MAC address changes (in seconds):");
+    let mut duration = String::new();
+    io::stdin()
+        .read_line(&mut duration)
+        .expect("Failed to read line");
+    let duration: f64 = duration.trim().parse().expect("Please enter a valid number");
+
+    loop {
+        let new_mac = generate_random_mac();
+        println!("Changing MAC address to: {}", new_mac);
+        change_mac_address(&interface, &new_mac);
+
+        tokio::time::sleep(Duration::from_secs(duration as u64)).await;
+    }
+}
+
+// # Ref
+// 1. https://medium.com/@audiq4456/mac-address-changer-in-rust-for-security-researchers-957e6351482a
