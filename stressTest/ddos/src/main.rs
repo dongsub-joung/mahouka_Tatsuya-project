@@ -6,16 +6,16 @@ mod utils;
 
 #[tokio::main]
 async fn main() ->  Result<(),  Box<dyn Error>>{
-    // @todo mac address chaner
+    // @todo mac address changer(interval 10min) 
     
     
-    // @todo2 Shuffle network Node
+    // @todo2 Shuffle network Node(If you have some nodes)
 
 
-    // @todo3 or conn Tor Bridge 
+    // @todo3 or conn Tor Bridge(default)
 
-    
-    // @todo4 miss-authentication application layer 
+
+    // @todo4 miss-authentication application layer(if you need) 
 
     
     utils::show_logo();
@@ -29,7 +29,7 @@ async fn main() ->  Result<(),  Box<dyn Error>>{
 
     match input_number {
         1 => http_flood.get_resource_attack().await,
-        2 => http_flood.post_requeste_attack("body".to_string(), utils::get_text_data()).await,
+        // 2 => http_flood.post_requeste_attack("body".to_string(), utils::get_text_data()).await,
         _ => println!("Unvalid code"),
     }
      
