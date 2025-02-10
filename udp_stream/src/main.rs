@@ -31,6 +31,9 @@ fn main() ->  std::io::Result<()> {
 
         let recive_socket = UdpSocket::bind(remote_ip.clone()).expect("couldn't bind to address");
 
+        // frist conn test
+        recive_socket.send_to(&[0; 10], remote_ip.clone()).expect("couldn't send data");
+
         loop {
             if std::io::ErrorKind::NotConnected == recive_socket.peer_addr().unwrap_err().kind() {
                 println!("Conn err, rechecking");
@@ -40,9 +43,6 @@ fn main() ->  std::io::Result<()> {
                     Err(error) => println!("UdpSocket.take_error failed: {error:?}"),
                 }
             }else{
-                // frist conn test
-                recive_socket.send_to(&[0; 10], remote_ip.clone()).expect("couldn't send data");
-
                 // if broadcast
                 // recive_socket.set_broadcast(true);
 
@@ -57,7 +57,13 @@ fn main() ->  std::io::Result<()> {
 
                 let device_state = DeviceState::new();
                 let mouse: MouseState = device_state.get_mouse();
-                println!("{:#?}", mouse.coords);
+                // println!("{:#?}", mouse.coords);
+
+                // i32 to u8 (overhead) - Serialization
+                let data= mouse.coords;
+                
+
+                // recive_socket.send_to(&[], remote_ip.clone()).expect("couldn't send data");
             }
         }
 
