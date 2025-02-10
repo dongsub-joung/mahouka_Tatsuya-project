@@ -1,4 +1,5 @@
 use std::net::{self, IpAddr, Ipv4Addr, UdpSocket};
+use device_query::{DeviceQuery, DeviceState, MouseState};
 
 fn send(socket: &net::UdpSocket, receiver: &str, msg: &Vec<u8>) -> usize {
 
@@ -53,12 +54,14 @@ fn main() ->  std::io::Result<()> {
                 let duration = std::time::Duration::new(1, 0);
                 let dur = std::option::Option::Some(duration);
                 recive_socket.set_read_timeout(dur).expect("failed to set timeout");
+
+                let device_state = DeviceState::new();
+                let mouse: MouseState = device_state.get_mouse();
+                println!("{:#?}", mouse.coords);
             }
         }
 
-
-        // check keeping conn
-        // mouse pointer x,y + screenshot copy
+        // If I can to that (screenshot copy, not save)
         // shift + cnt + print-f(gnome)
     }
 
