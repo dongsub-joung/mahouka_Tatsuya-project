@@ -49,6 +49,10 @@ fn main() ->  std::io::Result<()> {
 
                 //  set_nonblocking - https://doc.rust-lang.org/std/net/struct.UdpSocket.html#method.set_nonblocking
 
+                // about timeout option
+                let duration = std::time::Duration::new(1, 0);
+                let dur = std::option::Option::Some(duration);
+                recive_socket.set_read_timeout(dur).expect("failed to set timeout");
             }
         }
 
