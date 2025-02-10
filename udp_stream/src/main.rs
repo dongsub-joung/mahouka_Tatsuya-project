@@ -1,6 +1,18 @@
 use std::net::{self, IpAddr, Ipv4Addr, UdpSocket};
 use device_query::{DeviceQuery, DeviceState, MouseState};
 
+use serde::{Deserialize, Serialize};
+use serialize_deserialize_u8_i32::s_d_u8_i32;
+use bincode;
+
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
+struct Position {
+    x: u32,
+    x_bar: bool,
+    y: u32,
+    y_bar: bool,
+}
+
 fn send(socket: &net::UdpSocket, receiver: &str, msg: &Vec<u8>) -> usize {
 
     println!("sending message: {:?}", msg);
@@ -61,9 +73,20 @@ fn main() ->  std::io::Result<()> {
 
                 // i32 to u8 (overhead) - Serialization
                 let data= mouse.coords;
-                
 
-                // recive_socket.send_to(&[], remote_ip.clone()).expect("couldn't send data");
+                let position= Position{
+                    x: data.0 as u32,
+                    x_bar: false,
+                    y: data.1 as u32,
+                    y_bar: false,
+                };
+
+                // https://docs.rs/serialize_deserialize_u8_i32/latest/serialize_deserialize_u8_i32/
+                let encoded_u8: Vec<u8> = bincode::serialize(&position).unwrap();
+                recive_socket.send_to(&encoded_u8, remote_ip.clone()).expect("couldn't send data");
+            
+                // receive
+                //     let encoded_i32: Vec<i32> = s_d_u8_i32::serialize_u8_to_i32(encoded_u8);
             }
         }
 
