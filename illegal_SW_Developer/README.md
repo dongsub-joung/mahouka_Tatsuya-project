@@ -13,3 +13,7 @@ https://www.akamai.com/blog/security-research/weaponizing-dhcp-dns-spoofing-hand
 
 ## ref how to)  
 rscap - https://crates.io/crates/rscap
+
+## moto code as python)  
+
+https://github.com/akamai/DDSpoof
