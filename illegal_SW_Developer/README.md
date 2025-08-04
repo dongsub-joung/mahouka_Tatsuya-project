@@ -1,10 +1,15 @@
 JoungDongSub is a illegal SW Developer
 I will create
-- DNS 스푸핑
+- DNS Spoofing tool kit
+- DNS Protection tool against Spoofing and Poisoning Attacks 
 - DNS 리졸버 우회
 - DNS 캐시 무효화
 
 
-# ref how to)  
+# DNS Spoofing tool kit. 
 
+## how to work)  
+https://www.akamai.com/blog/security-research/weaponizing-dhcp-dns-spoofing-hands-on-guide
+
+## ref how to)  
 rscap - https://crates.io/crates/rscap
