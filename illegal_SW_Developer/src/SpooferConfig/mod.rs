@@ -21,20 +21,24 @@ impl SpooferConfig{
         Self { iface, max_retry, client_id, target_server, requested_ip, dhcp_servers }
     }
 
-    pub fn str_print(){
-            text = f"""
+    pub fn str_print(self){
+            let text = format!("
 ----------------------------------------
              Running Config             
 ----------------------------------------
-Working Interface: {self.iface}
-Max Retries: {self.max_retry}
-Client ID: {self.client_id}
-Requested IP: {self.requested_ip}
-Target Server: {self.target_server}
+Working Interface: {}
+Max Retries: {}
+Client ID: {}
+Requested IP: {}
+Target Server: {}
 
 ----------------------------------------
              DHCP Servers             
 ----------------------------------------
-        """
+        ", self.iface, self.max_retry, self.client_id, self.requested_ip, self.target_server);
+
+        for (k,v) in self.dhcp_servers {
+            println!("{}: {}", k, v);
+        }
     }
 }
