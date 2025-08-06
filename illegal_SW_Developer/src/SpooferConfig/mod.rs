@@ -1,4 +1,5 @@
 use std::collections::{self, HashMap};
+use crate::DHCPServer::{self, DHCPServer};
 
 struct SpooferConfig{
     iface: &'static str,
@@ -6,7 +7,7 @@ struct SpooferConfig{
     client_id: &'static str,
     target_server: &'static str,
     requested_ip: &'static str,
-    dhcp_servers: HashMap<&'static str, DHCPServer>
+    dhcp_servers: HashMap<&'static str, DHCPServer::DHCPServer>
 }
 
 impl SpooferConfig{
@@ -16,7 +17,7 @@ impl SpooferConfig{
         let client_id= "";
         let target_server= "";
         let requested_ip= "";
-        let dhcp_servers: HashMap<&'static str, DHCPServer>= HashMap::new();
+        let dhcp_servers: HashMap<&'static str, DHCPServer::DHCPServer>= HashMap::new();
 
         Self { iface, max_retry, client_id, target_server, requested_ip, dhcp_servers }
     }
@@ -39,7 +40,7 @@ Target Server: {}
 
         let mut dhcp_server_str= String::new();
         for (k,v) in self.dhcp_servers {
-            let set_str= format!("{}: {}", k , v);
+            let set_str= format!("{}: {:?}", k , v);
             dhcp_server_str.push_str(&set_str);
         }
 

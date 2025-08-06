@@ -1,8 +1,10 @@
-struct DHCPServer{
+
+#[derive(Debug)]
+pub struct DHCPServer{
     ip_address: &'static str,
     domain_name: &'static str,
     dns_servers: Vec<String>,
-    name_protection_status: bool,
+    name_protection_status: Option<bool>,
 }
 
 impl DHCPServer{
@@ -15,19 +17,19 @@ impl DHCPServer{
         Self{ ip_address, domain_name, dns_servers, name_protection_status }
     }
 
-    fn return_str(self) -> String{
-        let flag= match self.name_protection_status 
-        {
-            Some(b) => String::from(b),
+    pub fn return_str(self) -> String{
+        let v: Option<bool>= self.name_protection_status.into();
+        let flag= match v{
+            Some(b) => format!("{}" , b),
             None => String::from("Unknown"),
         };
 
         return format!("
 IP Address: {}
 Domain Name: {}
-DNS Servers: {}
+DNS Servers: {:?}
 Name Protection Enabled:  {}"
-    , self.ip_address, self.domain_name, self.dns_servers, );
+    , self.ip_address, self.domain_name, self.dns_servers, flag);
     }
 }
 
