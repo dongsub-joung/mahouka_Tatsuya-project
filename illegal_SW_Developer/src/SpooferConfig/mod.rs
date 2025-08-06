@@ -21,7 +21,7 @@ impl SpooferConfig{
         Self { iface, max_retry, client_id, target_server, requested_ip, dhcp_servers }
     }
 
-    pub fn str_print(self){
+    pub fn str_print(self) -> String{
             let text = format!("
 ----------------------------------------
              Running Config             
@@ -37,8 +37,12 @@ Target Server: {}
 ----------------------------------------
         ", self.iface, self.max_retry, self.client_id, self.requested_ip, self.target_server);
 
+        let mut dhcp_server_str= String::new();
         for (k,v) in self.dhcp_servers {
-            println!("{}: {}", k, v);
+            let set_str= format!("{}: {}", k , v);
+            dhcp_server_str.push_str(&set_str);
         }
+
+        format!("{} / {}", text, dhcp_server_str)
     }
 }
