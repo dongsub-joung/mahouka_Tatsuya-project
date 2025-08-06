@@ -22,7 +22,7 @@ impl SpooferConfig{
         Self { iface, max_retry, client_id, target_server, requested_ip, dhcp_servers }
     }
 
-    pub fn str_print(self) -> String{
+    pub fn get_spooferconfig_str(self) -> String{
             let text = format!("
 ----------------------------------------
              Running Config             

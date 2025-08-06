@@ -17,7 +17,7 @@ impl DHCPServer{
         Self{ ip_address, domain_name, dns_servers, name_protection_status }
     }
 
-    pub fn return_str(self) -> String{
+    pub fn get_dhcp_server_str(self) -> String{
         let v: Option<bool>= self.name_protection_status.into();
         let flag= match v{
             Some(b) => format!("{}" , b),
