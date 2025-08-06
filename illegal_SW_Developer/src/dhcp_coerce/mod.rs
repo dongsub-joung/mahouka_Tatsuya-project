@@ -1,0 +1,5 @@
+// "-i","--iface", "The name of the interface to use when sending packets"
+// "-d", "--domain-name", help="The FQDN of the domain we are targeting"
+// "-s", "--target-server", help="The IP address of the target DHCP server"
+// "-c", "--coerce-ip", help="An IP address that is part of the DHCP coercion scope we previously created on the target server"
+// "-ip", "--relay-ip", help="The IP address of our machine. This address needs to be part of an existing scope on the target server"

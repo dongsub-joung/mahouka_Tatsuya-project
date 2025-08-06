@@ -17,10 +17,3 @@ rscap - https://crates.io/crates/rscap
 ## moto code as python)  
 
 https://github.com/akamai/DDSpoof
-
-
-# Common 
-
-## UI  
-
-https://github.com/ssokolow/rust-cli-boilerplate/tree/master
