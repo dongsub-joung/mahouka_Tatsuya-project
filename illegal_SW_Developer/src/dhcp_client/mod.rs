@@ -69,6 +69,31 @@ impl DHCPClient {
         self.verbose = verbose;
     }
 
+    pub fn send_release(self, client_id: str, release_addr: str, dhcp_server: str = ""){
+        let dhcp_str=
+        "
+        Send a DHCP release packet of a specified IP address. For the release packet to work, the CID of our client must
+        match the CID of the original leasing client.
+        :param client_id: CID to use when sending the packet
+        :param release_addr: IP address to release
+        :param dhcp_server: Optionally target only a specific server. By default, all receiving servers would process the request.
+
+        :return:
+        ";
+
+        let bootp = self._initialize_bootp_layer(release_addr, client_id);
+
+        let dhcp_options = self._initialize_dhcp_release_options(dhcp_server);
+
+        // division
+        let packet = (self._packet_base) / (bootp) / (DHCP(options=dhcp_options));
+
+        let iface=self.iface;
+        let verbose= false;
+
+        return sendp(packet, iface, verbose);
+    }
+
     pub fn dhcp_dora(
             self, client_id: String, fqdn: String, requested_ip: String, dhcp_server: String
             , max_retry: usize, fqdn_server_flag: bool, relay_address: String) -> std::option::Option<String> {
