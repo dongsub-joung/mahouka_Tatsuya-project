@@ -45,14 +45,14 @@ pub struct DHCPClient{
     iface: String,
     flag: bool,
     target_server: String,
-    packet_base: String,
+    packet_base: usize,
     verbose: bool,
 }
 
 impl DHCPClient {
     pub fn new(iface: String, flag: bool, target_server: String) -> Self{
         DHCPClient { iface, flag, target_server
-            , packet_base: String::new()
+            , packet_base: 9999
             , verbose: false
         }
     }
@@ -87,7 +87,7 @@ impl DHCPClient {
         let dhcp_options = self._initialize_dhcp_release_options(dhcp_server);
 
         // division
-        let packet = (self._packet_base) / (bootp) / (DHCP(options=dhcp_options));
+        let packet = (self.packet_base) / (bootp) / (DHCP(options=dhcp_options));
 
         let iface=self.iface;
         let verbose= false;
@@ -97,7 +97,7 @@ impl DHCPClient {
 
     pub fn dhcp_dora(
             self, client_id: String, fqdn: String, requested_ip: String, dhcp_server: String
-            , max_retry: usize, fqdn_server_flag: bool, relay_address: String) -> std::option::Option<String> {
+            , max_retry: usize, fqdn_server_flag: bool, relay_address: &'static str) -> std::option::Option<String> {
 
         const DHCP_DORA_STR: &'static str=
         "
@@ -117,6 +117,32 @@ impl DHCPClient {
 
         let bootp = self.initialize_bootp_layer(ZERO_ROOP_IP, client_id, relay_address);
         
+        let dhcp_discover_options = self.initialize_dhcp_discover_options(
+            dhcp_server, requested_ip, relay_address
+        );
+
+        // from scapy.all import BOOTP, DHCP, IP, UDP, Ether, Packet, get_if_hwaddr, sendp
+        // let dhcp_discover = DHCP(options=dhcp_discover_options);
+        let discover_packet = (self.packet_base) / (bootp) / (dhcp_discover);
+
+        let DHCP_OFFER_FILTER_RELAY= {if !relay_address.is_empty() {
+            relay_address
+        }else{
+            DHCP_OFFER_FILTER
+        }};
+
+        let offer_packet = self.send_recv_dhcp(
+            discover_packet, DHCP_OFFER_FILTER_RELAY, DHCP_TYPE_OFFER, max_retry
+        );
+
+        if offer_packet{
+            let offer_addr = offer_packet[BOOTP].yiaddr;
+
+            if offer_addr {
+                
+            }
+        }
+
         return leased_ip;
     }
 }
