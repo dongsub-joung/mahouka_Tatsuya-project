@@ -1,6 +1,7 @@
 mod spoofer_config;
 mod dhcp_server;
 mod dhcp_coerce;
+mod dhcp_client;
 
 use clap::Parser;
 
@@ -17,4 +18,6 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
+    
+    let dhcp_client =dhcp_client::DHCPClient::new(args.iface, true, args.target_server);
 }
