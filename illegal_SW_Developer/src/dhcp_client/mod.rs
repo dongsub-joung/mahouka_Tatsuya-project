@@ -45,11 +45,28 @@ pub struct DHCPClient{
     iface: String,
     flag: bool,
     target_server: String,
+    packet_base: String,
+    verbose: bool,
 }
 
 impl DHCPClient {
     pub fn new(iface: String, flag: bool, target_server: String) -> Self{
-        DHCPClient { iface, flag, target_server }
+        DHCPClient { iface, flag, target_server
+            , packet_base: String::new()
+            , verbose: false
+        }
+    }
+
+    pub fn init(self, iface: String, verbose: bool, server_ip: Option<String>){
+        self.iface = iface;
+
+        if server_ip.is_none()[
+            self.packet_base = self.get_broadcast_dhcp_packet(get_if_hwaddr(iface))
+        ]else{
+            self.packet_base = self.get_unicast_dhcp_packet(get_if_hwaddr(iface), server_ip)
+        }
+            
+        self.verbose = verbose;
     }
 
     pub fn dhcp_dora(
@@ -60,17 +77,4 @@ impl DHCPClient {
 
         return leased_ip;
     }
-}
-
-
-pub fn init(iface: String, verbose: bool, server_ip: Option<String>){
-    let iface = iface;
-
-    if server_ip.is_none()[
-        self._packet_base = self.get_broadcast_dhcp_packet(get_if_hwaddr(iface))
-    ]else{
-         self._packet_base = self.get_unicast_dhcp_packet(get_if_hwaddr(iface), server_ip)
-    }
-        
-    self._verbose = verbose
 }
