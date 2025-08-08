@@ -73,13 +73,13 @@ impl DHCPClient {
         // send_release maybe?
         const DHCP_RELEASE_PACKET_STR: &'static str=
         "
-        Send a DHCP release packet of a specified IP address. For the release packet to work, the CID of our client must
-        match the CID of the original leasing client.
-        :param client_id: CID to use when sending the packet
-        :param release_addr: IP address to release
-        :param dhcp_server: Optionally target only a specific server. By default, all receiving servers would process the request.
-
-        :return:
+        Send a DHCP release packet of a specified IP address. For the release packet to work, the CID of our client must\n
+        match the CID of the original leasing client.\n
+        :param client_id: CID to use when sending the packet\n
+        :param release_addr: IP address to release\n
+        :param dhcp_server: Optionally target only a specific server. By default, all receiving servers would process the request.\n
+\n
+        :return:\n
         ";
 
         let bootp = self._initialize_bootp_layer(release_addr, client_id);
@@ -101,23 +101,22 @@ impl DHCPClient {
 
         const DHCP_DORA_STR: &'static str=
         "
-        Perform a DHCP DORA with a specified FQDN to invoke a DHCP DNS Dynamic Update.
-        :param fqdn: Optional. The FQDN to send to the DHCP server.
-        :param requested_ip: Optional. a specific IP address to request from the DHCP server.
-        if the IP is not in the scope of the server or taken, a different address would be leased.
-        :param dhcp_server: Optional. The specific DHCP server address to target. Without it, a broadcast is sent
-        and the first server to reply would be used.
-        :param max_retry: Maximum amount of retries to the DORA process.
-        :param relay_address: ip address of the relay agent to use.
-        :return: Return the IP address that was leased to the client, or None if the lease failed
+        Perform a DHCP DORA with a specified FQDN to invoke a DHCP DNS Dynamic Update.\n
+        :param fqdn: Optional. The FQDN to send to the DHCP server.\n
+        :param requested_ip: Optional. a specific IP address to request from the DHCP server.\n
+        if the IP is not in the scope of the server or taken, a different address would be leased.\n
+        :param dhcp_server: Optional. The specific DHCP server address to target. Without it, a broadcast is sent\n
+        and the first server to reply would be used.\n
+        :param max_retry: Maximum amount of retries to the DORA process.\n
+        :param relay_address: ip address of the relay agent to use.\n
+        :return: Return the IP address that was leased to the client, or None if the lease failed\n
         ";
         const ZERO_ROOP_IP: &'static str= "0.0.0.0";
 
         let mut leased_ip: Option<String>= None;
 
         let bootp = self.initialize_bootp_layer(ZERO_ROOP_IP, client_id, relay_address);
-
-
+        
         return leased_ip;
     }
 }
