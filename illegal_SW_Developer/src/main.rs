@@ -19,5 +19,9 @@ struct Args {
 fn main() {
     let args = Args::parse();
     
-    let dhcp_client =dhcp_client::DHCPClient::new(args.iface, true, args.target_server);
+    let iface= args.iface;
+    let flag= true;
+    let target_server= args.target_server;
+
+    let dhcp_client =dhcp_client::DHCPClient::new(iface, flag, target_server);
 }
