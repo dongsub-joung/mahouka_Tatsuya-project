@@ -1,11 +1,5 @@
 use std::collections::HashMap;
 
-pub struct DHCPClient{
-    iface: String,
-    flag: bool,
-    target_server: String,
-}
-
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
 const DHCP_TYPE_REQUEST: &'static str = "request";
@@ -47,6 +41,12 @@ enum DHCP_OPTIONS{
     DHCP_OPTION_DOMAIN_option
 } 
 
+pub struct DHCPClient{
+    iface: String,
+    flag: bool,
+    target_server: String,
+}
+
 impl DHCPClient {
     pub fn new(iface: String, flag: bool, target_server: String) -> Self{
         DHCPClient { iface, flag, target_server }
@@ -60,4 +60,17 @@ impl DHCPClient {
 
         return leased_ip;
     }
+}
+
+
+pub fn init(iface: String, verbose: bool, server_ip: Option<String>){
+    let iface = iface;
+
+    if server_ip.is_none()[
+        self._packet_base = self.get_broadcast_dhcp_packet(get_if_hwaddr(iface))
+    ]else{
+         self._packet_base = self.get_unicast_dhcp_packet(get_if_hwaddr(iface), server_ip)
+    }
+        
+    self._verbose = verbose
 }
