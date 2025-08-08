@@ -69,8 +69,9 @@ impl DHCPClient {
         self.verbose = verbose;
     }
 
-    pub fn send_release(self, client_id: str, release_addr: str, dhcp_server: str = ""){
-        let dhcp_str=
+    pub fn send_release(self, client_id: String, release_addr: String, dhcp_server: String){
+        // send_release maybe?
+        const DHCP_RELEASE_PACKET_STR: &'static str=
         "
         Send a DHCP release packet of a specified IP address. For the release packet to work, the CID of our client must
         match the CID of the original leasing client.
@@ -98,7 +99,24 @@ impl DHCPClient {
             self, client_id: String, fqdn: String, requested_ip: String, dhcp_server: String
             , max_retry: usize, fqdn_server_flag: bool, relay_address: String) -> std::option::Option<String> {
 
+        const DHCP_DORA_STR: &'static str=
+        "
+        Perform a DHCP DORA with a specified FQDN to invoke a DHCP DNS Dynamic Update.
+        :param fqdn: Optional. The FQDN to send to the DHCP server.
+        :param requested_ip: Optional. a specific IP address to request from the DHCP server.
+        if the IP is not in the scope of the server or taken, a different address would be leased.
+        :param dhcp_server: Optional. The specific DHCP server address to target. Without it, a broadcast is sent
+        and the first server to reply would be used.
+        :param max_retry: Maximum amount of retries to the DORA process.
+        :param relay_address: ip address of the relay agent to use.
+        :return: Return the IP address that was leased to the client, or None if the lease failed
+        ";
+        const ZERO_ROOP_IP: &'static str= "0.0.0.0";
+
         let mut leased_ip: Option<String>= None;
+
+        let bootp = self.initialize_bootp_layer(ZERO_ROOP_IP, client_id, relay_address);
+
 
         return leased_ip;
     }
