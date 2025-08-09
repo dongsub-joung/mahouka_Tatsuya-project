@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use rand::prelude::*;
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
@@ -179,4 +180,51 @@ impl DHCPClient {
 
         return leased_ip;
     }
+
+    pub fn initialize_bootp_layer(self, client_address: String, client_id: String, relay_address: String){
+        let relay_address= String::from("\n
+        initialize a scapy BOOTP layer for our packets\n
+        :param client_address: IP address of the client\n
+        :param client_id: MAC address of the client\n
+        :param relay_address: ip address of the relay agent to use.\n
+        :return: BOOTP object with the specified data\n
+        \n");
+        
+        if !relay_address.is_empty() {
+            let op= 1;
+            let chaddr= binascii.unhexlify(client_id);
+            let ciaddr=client_address;
+            let xid= generate_random();
+            let giaddr= relay_address;
+
+            // from scapy.all import BOOTP, DHCP, IP, UDP, Ether, Packet, get_if_hwaddr, sendp
+            return BOOTP(
+                op,
+                chaddr,
+                ciaddr,
+                xid,
+                giaddr,
+            );
+        }else{
+            let op= 1;
+            let chaddr= binascii.unhexlify(client_id);
+            let ciaddr= client_address;
+            let xid= generate_random();
+
+            return BOOTP(
+                op,
+                chaddr,
+                ciaddr,
+                xid,
+            );
+        }
+    }
+}
+
+pub fn generate_random() -> i32{
+    let mut rng = rand::rng();
+    let mut nums: Vec<i32> = (0..9999).collect();
+    nums.shuffle(&mut rng);
+    
+    nums.choose(&mut rng).unwrap().clone()
 }
