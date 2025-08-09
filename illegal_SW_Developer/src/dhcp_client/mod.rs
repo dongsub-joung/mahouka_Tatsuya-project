@@ -139,7 +139,39 @@ impl DHCPClient {
             let offer_addr = offer_packet[BOOTP].yiaddr;
 
             if offer_addr {
-                
+                let requested_addr=offer_addr.clone();
+                let dhcp_server=dhcp_server.clone();
+                let fqdn=fqdn.clone();
+                let fqdn_server_flag=fqdn_server_flag.clone();
+                let relay_address=relay_address.clone();
+
+                let dhcp_request_options = self.initialize_dhcp_request_options(
+                    requested_addr, dhcp_server, fqdn, fqdn_server_flag,
+                    relay_address
+                );
+
+                let options=dhcp_request_options.clone();
+                let dhcp_request = DHCP(options);
+
+                let request_packet = (self.packet_base) / (bootp) / (dhcp_request);
+                let dhcp_ack_filter_relay_value= match DHCP_ACK_FILTER_RELAY{
+                    relay_address => relay_address,
+                    _ => DHCP_ACK_FILTER,
+                };
+
+                let ack_packet = self.send_recv_dhcp(
+                    request_packet, dhcp_ack_filter_relay_value, DHCP_TYPE_ACK, max_retry
+                );
+
+                if !ack_packet {
+                    if self.verbose {
+                        println!(
+                            "[*] DHCP DORA didnt get ACK, need to verify record creation"
+                        );
+                    }
+                }
+
+                offer_addr
             }
         }
 
