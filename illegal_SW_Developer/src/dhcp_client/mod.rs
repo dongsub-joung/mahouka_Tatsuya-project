@@ -221,14 +221,63 @@ impl DHCPClient {
         }
     }
 
+    pub fn initialize_dhcp_discover_options(
+        self,
+        dhcp_server: &'static str,
+        requested_ip: &'static str,
+        param_req_list: Vec<String>,
+        relay_address: &'static str,
+    )
+    -> Vec<(&'static str, &'static str)>{
+
+        let discovery_packet= "\n
+        Initialize the DHCP options for a Discover packet\n
+        :param dhcp_server: IP address of the target server, would be used in the server_id/ option\n
+        :param requested_ip: Requested IP address, would be used in the requested_ip option\n
+        :param param_req_list: List of params to request from the DHCP server, would be used in the param_req_list option\n
+        :param relay_address: ip address of the relay agent to use.\n
+        :return: List containing DHCP options in the expected format for scapy\n
+        \n";
+
+        let mut dhcp_options= Vec::from([(DHCP_OPTION_MESSAGE_TYPE, DHCP_TYPE_DISCOVER)]);
+
+        if !dhcp_server.is_empty(){
+            dhcp_options.push((DHCP_OPTION_SERVER_IDENTIFIER, dhcp_server));
+        }
+
+        if !requested_ip.is_empty() {
+            dhcp_options.push((DHCP_OPTION_REQUESTED_ADDRESS, requested_ip));
+        }
+
+        if !param_req_list.is_empty() {
+            // Request the domain name and configured name servers from the DHCP servers.
+            // [DHCP_OPTIONS[param] for param in param_req_list]
+            let DHCP_OPTIONS: Vec<String>= param_req_list.iter().map(|f| String::from(f)).collect();
+            let dhcp_options_str= make_from_vector_to_string(DHCP_OPTIONS);
+            dhcp_options.push(
+                (DHCP_OPTION_PARAM_REQUEST_LIST, &dhcp_options_str),
+            );
+        }
+
+        if !relay_address.is_empty() {
+            // 0x05 is sub-option 5, 0x04 is length of the data - 4 bytes representing an IP address
+            let option82: &'static str = b"\x05\x04" + ip_to_bytes(requested_ip);
+            dhcp_options.push((DHCP_OPTION_RELAY_AGENT_INFO, option82));
+        }
+    
+        dhcp_options.push((DHCP_OPTION_END, ""));
+
+        return dhcp_options;
+    }
+
     pub fn initialize_dhcp_request_options(
         self,
         requested_addr: String,
-        dhcp_server: String,
+        dhcp_server: &'static str,
         fqdn: String,
         fqdn_server_flag: bool,
         relay_address: String,
-    ) -> Vec<(String, usize)>{
+    ) {
 
         let init_dhcp_options= String::from("\n
         Initialize the DHCP options for a Request packet\n
@@ -240,8 +289,6 @@ impl DHCPClient {
         :return: List containing DHCP options in the expected format for scapy\n
         \n");
 
-
-        
     }
 }
 
@@ -251,4 +298,13 @@ pub fn generate_random() -> i32{
     nums.shuffle(&mut rng);
     
     nums.choose(&mut rng).unwrap().clone()
+}
+
+pub fn make_from_vector_to_string(v: Vec<String>) -> String{
+    let mut result_str= String::new();
+    for e in v {
+        result_str.push_str(&e);
+    }
+
+    result_str
 }
