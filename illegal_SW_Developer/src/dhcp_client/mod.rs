@@ -136,6 +136,7 @@ impl DHCPClient {
         );
 
         if offer_packet{
+            // from scapy.all import BOOTP, DHCP, IP, UDP, Ether, Packet, get_if_hwaddr, sendp
             let offer_addr = offer_packet[BOOTP].yiaddr;
 
             if offer_addr {
@@ -151,6 +152,7 @@ impl DHCPClient {
                 );
 
                 let options=dhcp_request_options.clone();
+                // from scapy.all import BOOTP, DHCP, IP, UDP, Ether, Packet, get_if_hwaddr, sendp
                 let dhcp_request = DHCP(options);
 
                 let request_packet = (self.packet_base) / (bootp) / (dhcp_request);
