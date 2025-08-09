@@ -272,12 +272,12 @@ impl DHCPClient {
 
     pub fn initialize_dhcp_request_options(
         self,
-        requested_addr: String,
+        requested_addr: &'static str,
         dhcp_server: &'static str,
         fqdn: String,
         fqdn_server_flag: bool,
         relay_address: String,
-    ) {
+    ) -> Vec<(&'static str, &'static str)>{
 
         let init_dhcp_options= String::from("\n
         Initialize the DHCP options for a Request packet\n
@@ -289,6 +289,41 @@ impl DHCPClient {
         :return: List containing DHCP options in the expected format for scapy\n
         \n");
 
+        let mut dhcp_options = Vec::from([
+            (DHCP_OPTION_MESSAGE_TYPE, DHCP_TYPE_REQUEST),
+            (DHCP_OPTION_REQUESTED_ADDRESS, requested_addr),
+        ]);
+
+        if !dhcp_server.is_empty() {
+            dhcp_options.push((DHCP_OPTION_SERVER_IDENTIFIER, dhcp_server));
+        }
+
+        if !fqdn.is_empty() {
+            let fqdn_flags= if fqdn_server_flag {
+                b"\x01\x00\x00"
+            }else{
+                b"\x00\x00\x00"
+            };
+
+
+            // These are the flags of the FQDN option. in this case, only the Server flag is set,
+            // to indicate that the server should create a record on behalf of the client.
+            dhcp_options.push((
+                DHCP_OPTION_CLIENT_FQDN,
+                &format!("{}, {}", fqdn_flags, bytes(fqdn, "utf-8")),
+            ));
+        }
+
+        if !relay_address.is_empty() {
+            // 0x05 is sub-option 5, 0x04 is length of the data - 4 bytes representing an IP address
+            let option82 = b"\x05\x04" + ip_to_bytes(requested_addr);
+
+            dhcp_options.push((DHCP_OPTION_RELAY_AGENT_INFO, option82));
+        }
+
+        dhcp_options.push((DHCP_OPTION_END, ""));
+
+        dhcp_options
     }
 }
 
