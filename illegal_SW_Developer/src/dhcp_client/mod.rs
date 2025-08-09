@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use clap::builder::Str;
 use rand::prelude::*;
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
@@ -218,6 +219,29 @@ impl DHCPClient {
                 xid,
             );
         }
+    }
+
+    pub fn initialize_dhcp_request_options(
+        self,
+        requested_addr: String,
+        dhcp_server: String,
+        fqdn: String,
+        fqdn_server_flag: bool,
+        relay_address: String,
+    ) -> Vec<(String, usize)>{
+
+        let init_dhcp_options= String::from("\n
+        Initialize the DHCP options for a Request packet\n
+        :param requested_addr: Requested IP address, would be used in the requested_ip option\n
+        :param dhcp_server: IP address of the target server, would be used in the server_id option\n
+        :param fqdn: FQDN of the client, would be used in the Client_FQDN option.\n
+        :param fqdn_server_flag: set the server flag in the FQDN option to True or False.\n
+        :param relay_address: ip address of the relay agent to use.\n
+        :return: List containing DHCP options in the expected format for scapy\n
+        \n");
+
+
+        
     }
 }
 
