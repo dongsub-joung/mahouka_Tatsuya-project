@@ -3,7 +3,9 @@ use clap::builder::Str;
 use rand::prelude::*;
 use std::{thread, time::Duration};
 
-use crate::dhcp_server::DHCPServer;
+use utf8_decode::Decoder;
+
+use crate::dhcp_server::{self, DHCPServer};
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
@@ -14,7 +16,7 @@ const DHCP_TYPE_RELEASE: &'static str = "release";
 
 enum DHCP_MESSAGE_TYPE {
     DHCP_TYPE_DISCOVER,
-    DHCP_TYPE_OFFER,
+    DHCP_TYPE_OFFER,    
     DHCP_TYPE_REQUEST,
     DHCP_TYPE_ACK,
     DHCP_TYPE_NAK,
@@ -445,7 +447,9 @@ impl DHCPClient {
                         dhcp_servers= add_element_in_vector(dhcp_server_ip, dhcp_servers, self.parse_dhcp_server_offer_params(packet));
                         
                         // Remove the servers we already found from the filtering. this makes the capture more accurate.
-                        let filter = format!(" and not ip host {}",dhcp_server_ip);
+                        let filter: String = format!(" and not ip host {}",dhcp_server_ip);
+                        println!("{}", filter);
+
                         thread::sleep(Duration::from_secs(1));
                     }
                 }
@@ -454,6 +458,34 @@ impl DHCPClient {
 
         dhcp_servers
 
+    }
+
+    pub fn parse_dhcp_server_offer_params(self, offer_packet: Packet) -> DHCPServer{
+        let comment= "\n
+        Parse a DHCP offer and extract the necessary information from it, use it to construct a DHCPServer object\n
+        :param offer_packet: the Offer packet to parse\n
+        :return: DHCPServer object with the offering server data\n
+        \n";
+
+        let ip_address= offer_packet[BOOTP].siaddr;
+        let mut server_data= dhcp_server::DHCPServer::new();
+        server_data.ip_address= ip_address;
+
+        let name_server_option = get_dhcp_option(offer_packet, DHCP_OPTION_NAME_SERVER);
+
+        if !name_server_option.is_empty() {
+            server_data.dns_servers= Vec::from([name_server_option]);
+        }
+
+        let domain_name_option = get_dhcp_option(offer_packet, DHCP_OPTION_DOMAIN);
+        if !domain_name_option.is_empty() {
+            // domain_name_option[0][:-1].decode("utf-8")
+            server_data.domain_name = domain_name_option[0].trim();
+            let server_data_clone= format!("{}", server_data.domain_name.clone()).as_bytes();
+            let decoder = Decoder::new(server_data_clone.iter().cloned());
+        }
+
+        server_data
     }
 }
 
