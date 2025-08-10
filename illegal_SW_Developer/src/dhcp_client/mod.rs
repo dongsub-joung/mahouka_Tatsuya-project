@@ -533,7 +533,6 @@ impl DHCPClient {
         
         let mut ip;
         {
-
             let src_localhost_v4 = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
             let dst_localhost_v4 = IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255));
             // IP crate 作らなきゃ
@@ -545,6 +544,24 @@ impl DHCPClient {
 
 
         eth / ip / udp
+    }
+
+    fn get_unicast_dhcp_packet(src_mac: String, server_ip: String) -> Packet{
+        let comment= "
+        create the basic layers for a DHCP packet
+        :param src_mac: the source MAC address to send the packet with
+        :return: DHCP Packet with ethernet, IP and UDP layers
+        ";
+
+        let src=src_mac;
+        let eth = Ether(src);
+        
+        let dst=server_ip;
+        let ip = IP(dst);
+        
+        let udp = UDP(sport=68, dport=67);
+
+        return eth / ip / udp
     }
 }
 
