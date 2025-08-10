@@ -18,6 +18,18 @@ enum DHCP_MESSAGE_TYPE {
     DHCP_TYPE_ACK,
     DHCP_TYPE_NAK,
 }
+impl DHCP_MESSAGE_TYPE {
+    fn from_index(index: usize) -> Option<DHCP_MESSAGE_TYPE> {
+            match index {
+                0 => Some(DHCP_MESSAGE_TYPE::DHCP_TYPE_DISCOVER),
+                1 => Some(DHCP_MESSAGE_TYPE::DHCP_TYPE_OFFER),
+                2 => Some(DHCP_MESSAGE_TYPE::DHCP_TYPE_REQUEST),
+                3 => Some(DHCP_MESSAGE_TYPE::DHCP_TYPE_ACK),
+                4 => Some(DHCP_MESSAGE_TYPE::DHCP_TYPE_NAK),
+                _ => None, // Handle invalid index
+            }
+    }
+}
 
 const DHCP_OPTION_NAME_SERVER: &'static str = "name_server";
 const DHCP_OPTION_DOMAIN:&'static str = "domain";
@@ -345,6 +357,48 @@ impl DHCPClient {
         dhcp_options.push((DHCP_OPTION_END, ""));
 
         return dhcp_options;
+    }
+
+    pub fn send_recv_dhcp(
+         self, packet: Packet, recv_filter: String, recv_type: usize, max_retry: usize
+    ) -> Packet{
+
+        let comment= "\n
+        Send a DHCP packet and recieve the expected response from the server\n
+        :param packet: scapy Packet to send\n
+        :param recv_filter: BPF filter for the expected reply for our packet\n
+        :param recv_type: the DHCP type of the packet that we expect to recieve\n
+        :param max_retry: max times to attempt to re-send the packet if a response is not captured\n
+        :return: the response packet that was captured\n
+        \n";
+
+        let mut retry= 0;
+        while retry <= max_retry {
+            retry += 1
+
+            let ret_packets: Vec<Packet> = send_recv_with_filter(
+                packet, recv_filter, PACKET_SNIFF_TIMEOUT, self.iface
+            );
+
+            // if not ret_packets:
+            if !ret_packets.is_empty() {
+                if self.verbose {
+                    println!("[*] DHCP DORA didnt get {}, retrying", recv_type);
+                }
+                continue;
+            }
+
+            for packet in ret_packets {
+                let message_type_option = get_dhcp_option(packet,
+                    DHCP_OPTION_MESSAGE_TYPE
+                )[0];
+
+                let dhcp_msg_type= DHCP_MESSAGE_TYPE::from_index(recv_type);
+                if message_type_option == dhcp_msg_type.into() {
+                    return packet;
+                }
+            }
+        }
     }
 }
 
