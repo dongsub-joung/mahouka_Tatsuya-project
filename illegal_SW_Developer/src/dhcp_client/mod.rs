@@ -7,6 +7,7 @@ use utf8_decode::Decoder;
 use std::net::UdpSocket;
 
 use crate::dhcp_server::{self, DHCPServer};
+use crate::utils;
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
@@ -281,7 +282,9 @@ impl DHCPClient {
 
         if !relay_address.is_empty() {
             // 0x05 is sub-option 5, 0x04 is length of the data - 4 bytes representing an IP address
-            let option82: &'static str = b"\x05\x04" + ip_to_bytes(requested_ip);
+            let option82: &'static str = format!("\x05\x04 : {:?}"
+                , utils::ip_to_bytes(String::from(requested_ip)))
+                .as_str();
             dhcp_options.push((DHCP_OPTION_RELAY_AGENT_INFO, option82));
         }
     
@@ -336,9 +339,10 @@ impl DHCPClient {
 
         if !relay_address.is_empty() {
             // 0x05 is sub-option 5, 0x04 is length of the data - 4 bytes representing an IP address
-            let option82 = b"\x05\x04" + ip_to_bytes(requested_addr);
+            let option82 = format!("\x05\x04 : {:?}"
+                , utils::ip_to_bytes(String::from(requested_addr)));
 
-            dhcp_options.push((DHCP_OPTION_RELAY_AGENT_INFO, option82));
+            dhcp_options.push((DHCP_OPTION_RELAY_AGENT_INFO, &option82));
         }
 
         dhcp_options.push((DHCP_OPTION_END, ""));
