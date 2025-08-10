@@ -293,9 +293,9 @@ impl DHCPClient {
         self,
         requested_addr: &'static str,
         dhcp_server: &'static str,
-        fqdn: String,
+        fqdn: &'static str,
         fqdn_server_flag: bool,
-        relay_address: String,
+        relay_address: &'static str,
     ) -> Vec<(&'static str, &'static str)>{
 
         let init_dhcp_options_comment= ("\n
@@ -487,6 +487,32 @@ impl DHCPClient {
         }
 
         server_data
+    }
+
+    pub fn delete_client_lease(self, client_id: String, requseted_addr: String){
+        let comment= "
+        Delete the lease of the client (based on CID) witout sending a Release packet. This allows re-leasing the same IP
+        without deleting previous DNS records, enabling us to direct multiple DNS records to the same IP.
+        To do this we send a DHCP request with the same CID, that is intended to another DHCP server.
+        This makes the server assume that the IP lease is no longer required and it is deleted - without touching the DNS record.
+        :param requseted_addr: an IP address that is in the scope of the DHCP server. If the address is outside the scope,
+        this would fail.
+        :return:
+        ";
+        let client_id_usize= client_id.parse().unwrap();
+        let bootp = self.initialize_bootp_layer("0.0.0.0", client_id_usize, "");
+        
+        let dhcp_request_options= self.initialize_dhcp_request_options(
+            &requseted_addr, "0.0.0.0", "", false,""
+        );
+
+        let options=dhcp_request_options;
+        let dhcp_request = DHCP(options);
+
+        let request_packet = self.packet_base / bootp / dhcp_request;
+
+        let verbose= false;
+        sendp(request_packet, self.iface, verbose);
     }
 }
 
