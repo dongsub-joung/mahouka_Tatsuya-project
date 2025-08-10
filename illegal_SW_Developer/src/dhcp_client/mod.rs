@@ -2,8 +2,9 @@ use std::collections::HashMap;
 use clap::builder::Str;
 use rand::prelude::*;
 use std::{thread, time::Duration};
-
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use utf8_decode::Decoder;
+use std::net::UdpSocket;
 
 use crate::dhcp_server::{self, DHCPServer};
 
@@ -513,6 +514,37 @@ impl DHCPClient {
 
         let verbose= false;
         sendp(request_packet, self.iface, verbose);
+    }
+
+    fn get_broadcast_dhcp_packet(src_mac: String) -> Packet{
+        let comment= "
+        create the basic layers for a DHCP packet
+        :param src_mac: the source MAC address to send the packet with
+        :return: DHCP Packet with ethernet, IP and UDP layers
+        ";
+        
+        let mut eth;
+        {
+            let dst="ff:ff:ff:ff:ff:ff";
+            let src=src_mac.clone();
+            // Ether crate 作らなきゃ
+            eth = Ether(dst, src);
+        }
+        
+        let mut ip;
+        {
+
+            let src_localhost_v4 = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
+            let dst_localhost_v4 = IpAddr::V4(Ipv4Addr::new(255, 255, 255, 255));
+            // IP crate 作らなきゃ
+            ip = IP(src, dst);
+        }
+
+        // Keep up
+        let udp = UDP(sport=68, dport=67);
+
+
+        eth / ip / udp
     }
 }
 
