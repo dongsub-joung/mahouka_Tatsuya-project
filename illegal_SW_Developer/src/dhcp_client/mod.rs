@@ -482,7 +482,8 @@ impl DHCPClient {
             // domain_name_option[0][:-1].decode("utf-8")
             server_data.domain_name = domain_name_option[0].trim();
             let server_data_clone= format!("{}", server_data.domain_name.clone()).as_bytes();
-            let decoder = Decoder::new(server_data_clone.iter().cloned());
+            let decoder: Decoder<_> = Decoder::new(server_data_clone.iter().cloned());
+            server_data.domain_name= decoder;
         }
 
         server_data

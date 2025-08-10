@@ -1,10 +1,11 @@
+use utf8_decode::Decoder;
 
 #[derive(Debug)]
 pub struct DHCPServer{
-    ip_address: &'static str,
-    domain_name: &'static str,
-    dns_servers: Vec<String>,
-    name_protection_status: Option<bool>,
+    pub ip_address: &'static str,
+    pub domain_name:  Decoder<_>,
+    pub dns_servers: Vec<String>,
+    pub name_protection_status: Option<bool>,
 }
 
 impl DHCPServer{
