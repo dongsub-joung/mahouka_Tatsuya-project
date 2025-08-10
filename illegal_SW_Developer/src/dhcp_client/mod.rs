@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use clap::builder::Str;
 use rand::prelude::*;
 
+use crate::dhcp_server::DHCPServer;
+
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
 const DHCP_TYPE_REQUEST: &'static str = "request";
@@ -333,6 +335,16 @@ impl DHCPClient {
         :param dhcp_server: IP address of the target server, would be used in the server_id option\n
         :return: List containing DHCP options in the expected format for scapy\n
         \n";
+
+        let mut dhcp_options = Vec::from([(DHCP_OPTION_MESSAGE_TYPE, DHCP_TYPE_RELEASE)]);
+
+        if !dhcp_server.is_empty() {
+           dhcp_options.push((DHCP_OPTION_SERVER_IDENTIFIER, dhcp_server));
+        }
+
+        dhcp_options.push((DHCP_OPTION_END, ""));
+
+        return dhcp_options;
     }
 }
 
