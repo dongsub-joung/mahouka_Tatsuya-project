@@ -73,7 +73,7 @@ impl DHCPClient {
 
     pub fn send_release(self, client_id: String, release_addr: String, dhcp_server: String){
         // send_release maybe?
-        const DHCP_RELEASE_PACKET_STR: &'static str=
+        const DHCP_RELEASE_PACKET_STR_comment: &'static str=
         "
         Send a DHCP release packet of a specified IP address. For the release packet to work, the CID of our client must\n
         match the CID of the original leasing client.\n
@@ -101,8 +101,8 @@ impl DHCPClient {
             self, client_id: String, fqdn: String, requested_ip: String, dhcp_server: String
             , max_retry: usize, fqdn_server_flag: bool, relay_address: &'static str) -> std::option::Option<String> {
 
-        const DHCP_DORA_STR: &'static str=
-        "
+        const DHCP_DORA_STR_comment: &'static str=
+        "\n
         Perform a DHCP DORA with a specified FQDN to invoke a DHCP DNS Dynamic Update.\n
         :param fqdn: Optional. The FQDN to send to the DHCP server.\n
         :param requested_ip: Optional. a specific IP address to request from the DHCP server.\n
@@ -183,7 +183,7 @@ impl DHCPClient {
     }
 
     pub fn initialize_bootp_layer(self, client_address: String, client_id: String, relay_address: String){
-        let relay_address= String::from("\n
+        let relay_address_comment= String::from("\n
         initialize a scapy BOOTP layer for our packets\n
         :param client_address: IP address of the client\n
         :param client_id: MAC address of the client\n
@@ -230,7 +230,7 @@ impl DHCPClient {
     )
     -> Vec<(&'static str, &'static str)>{
 
-        let discovery_packet= "\n
+        let discovery_packet_comment= "\n
         Initialize the DHCP options for a Discover packet\n
         :param dhcp_server: IP address of the target server, would be used in the server_id/ option\n
         :param requested_ip: Requested IP address, would be used in the requested_ip option\n
@@ -279,7 +279,7 @@ impl DHCPClient {
         relay_address: String,
     ) -> Vec<(&'static str, &'static str)>{
 
-        let init_dhcp_options= String::from("\n
+        let init_dhcp_options_comment= ("\n
         Initialize the DHCP options for a Request packet\n
         :param requested_addr: Requested IP address, would be used in the requested_ip option\n
         :param dhcp_server: IP address of the target server, would be used in the server_id option\n
@@ -324,6 +324,15 @@ impl DHCPClient {
         dhcp_options.push((DHCP_OPTION_END, ""));
 
         dhcp_options
+    }
+
+    pub fn initialize_dhcp_release_options(self, dhcp_server: &'static str) -> Vec<(&'static str, &'static str)>{
+        
+        let comment= "\n
+        Initialize the DHCP options for a Release packet\n
+        :param dhcp_server: IP address of the target server, would be used in the server_id option\n
+        :return: List containing DHCP options in the expected format for scapy\n
+        \n";
     }
 }
 
