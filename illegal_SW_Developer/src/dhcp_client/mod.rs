@@ -591,3 +591,28 @@ fn make_from_vector_to_string(v: Vec<String>) -> String{
 
     result_str
 }
+
+pub fn get_dhcp_option(packet: Packet, option_name: String) -> Vec<char>{
+    let comment= "
+    Parse a DHCP packet and extract a specified DHCP option
+    :param packet: DHCP packet
+    :param option_name: name of the option to extract
+    :return: the content of the specified option
+    ";
+
+    let packets= packet[DHCP].options;
+    let mut option_without_first: Vec<char>= Vec::new();
+    for option in packets {
+        if option[0] == option_name{
+            for (index, e) in option.as_bytes().iter().enumberate() {
+                if index == 0 {
+                    continue;
+                }else{
+                    option_without_first.push(e);
+                }
+            }
+        }
+    }
+    //  option[1:];
+    return option_without_first;
+}
