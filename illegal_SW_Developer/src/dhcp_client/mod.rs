@@ -426,7 +426,7 @@ impl DHCPClient {
 
         let discover_packet = self.packet_base / bootp / dhcp_discover;
 
-        let mut dhcp_servers = {};
+        let mut dhcp_servers: Vec<usize> = Vec::new();
     
         let filter = DHCP_OFFER_FILTER;
 
@@ -442,6 +442,7 @@ impl DHCPClient {
                     let dhcp_server_ip = packet[BOOTP].siaddr;
                     if !dhcp_servers.contain(dhcp_server_ip) {
                         // dhcp_servers[dhcp_server_ip] = self.parse_dhcp_server_offer_params(packet);
+                        dhcp_servers= add_element_in_vector(dhcp_server_ip, dhcp_servers, self.parse_dhcp_server_offer_params(packet));
                         
                         // Remove the servers we already found from the filtering. this makes the capture more accurate.
                         let filter = format!(" and not ip host {}",dhcp_server_ip);
@@ -456,7 +457,17 @@ impl DHCPClient {
     }
 }
 
-pub fn generate_random() -> i32{
+fn add_element_in_vector(idx: usize, mut v: Vec<usize>, add_element: usize) -> Vec<usize>{
+    for (i, e) in v.iter().enumerate() {
+        if idx == i {
+            v[i]= add_element;
+        }
+    }
+
+    v
+}
+
+fn generate_random() -> i32{
     let mut rng = rand::rng();
     let mut nums: Vec<i32> = (0..9999).collect();
     nums.shuffle(&mut rng);
@@ -464,7 +475,7 @@ pub fn generate_random() -> i32{
     nums.choose(&mut rng).unwrap().clone()
 }
 
-pub fn make_from_vector_to_string(v: Vec<String>) -> String{
+fn make_from_vector_to_string(v: Vec<String>) -> String{
     let mut result_str= String::new();
     for e in v {
         result_str.push_str(&e);
