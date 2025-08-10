@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use clap::builder::Str;
 use rand::prelude::*;
+use std::{thread, time::Duration};
 
 use crate::dhcp_server::DHCPServer;
 
@@ -196,7 +197,9 @@ impl DHCPClient {
         return leased_ip;
     }
 
-    pub fn initialize_bootp_layer(self, client_address: String, client_id: String, relay_address: String){
+    pub fn initialize_bootp_layer(
+        self, client_address: String, client_id: usize, relay_address: String
+    ) -> BOOTP{
         let relay_address_comment= String::from("\n
         initialize a scapy BOOTP layer for our packets\n
         :param client_address: IP address of the client\n
@@ -239,7 +242,7 @@ impl DHCPClient {
         self,
         dhcp_server: &'static str,
         requested_ip: &'static str,
-        param_req_list: Vec<String>,
+        param_req_list: Vec<&'static str>,
         relay_address: &'static str,
     )
     -> Vec<(&'static str, &'static str)>{
@@ -399,6 +402,57 @@ impl DHCPClient {
                 }
             }
         }
+    }
+
+    pub fn discover_dhcp_servers(
+        self, client_id: usize, max_retry: usize
+    ) -> HashMap<String, DHCPServer>{
+        let comment= "
+        Identifies all DHCP servers in the LAN and extracts useful data about them.\n
+        :param client_id: the id to use in the Discover packets sent\n
+        :param max_retry: Amount of Discover packets to send before returning.\n
+        :return: A Dictionary with data regarding the DHCP servers found.\n
+        \n";
+
+        let bootp = self.initialize_bootp_layer("0.0.0.0", client_id, String::new());
+
+        let dhcp_discover_options = self.initialize_dhcp_discover_options(
+            "", "",
+            Vec::from([DHCP_OPTION_NAME_SERVER, DHCP_OPTION_DOMAIN]),
+            ""
+        );
+
+        let dhcp_discover = DHCP(dhcp_discover_options);
+
+        let discover_packet = self.packet_base / bootp / dhcp_discover;
+
+        let mut dhcp_servers = {};
+    
+        let filter = DHCP_OFFER_FILTER;
+
+        for i in 0..max_retry {
+            let ret_packets = send_recv_with_filter(
+                discover_packet, filter, PACKET_SNIFF_TIMEOUT, self.iface
+            );
+
+            for packet in ret_packets {
+                let message_type_option = get_dhcp_option(packet,DHCP_OPTION_MESSAGE_TYPE)[0];
+
+                if message_type_option == DHCP_MESSAGE_TYPE::DHCP_TYPE_OFFER {
+                    let dhcp_server_ip = packet[BOOTP].siaddr;
+                    if !dhcp_servers.contain(dhcp_server_ip) {
+                        // dhcp_servers[dhcp_server_ip] = self.parse_dhcp_server_offer_params(packet);
+                        
+                        // Remove the servers we already found from the filtering. this makes the capture more accurate.
+                        let filter = format!(" and not ip host {}",dhcp_server_ip);
+                        thread::sleep(Duration::from_secs(1));
+                    }
+                }
+            }
+        }
+
+        dhcp_servers
+
     }
 }
 
