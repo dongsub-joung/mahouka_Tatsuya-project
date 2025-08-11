@@ -2,7 +2,7 @@ JoungDongSub is a illegal SW Developer
 I will create
 - DNS Spoofing tool kit
 - DNS Protection tool against Spoofing and Poisoning Attacks 
-- DNS 리졸버 우회
+- bypassing DNS resolvers Or circumventing DNS resolvers tool kit 
 - DNS 캐시 무효화
 
 
