@@ -7,7 +7,9 @@ use utf8_decode::Decoder;
 use std::net::UdpSocket;
 
 use crate::dhcp_server::{self, DHCPServer};
-use crate::utils;
+use crate::packet::Packet;
+use crate::{packet, utils};
+use crate::scapy_utils::send_recv_with_filter;
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
@@ -370,8 +372,8 @@ impl DHCPClient {
     }
 
     pub fn send_recv_dhcp(
-         self, packet: Packet, recv_filter: String, recv_type: usize, max_retry: usize
-    ) -> Packet{
+         self, packet: packet::Packet, recv_filter: String, recv_type: usize, max_retry: usize
+    ) -> packet::Packet{
 
         let comment= "\n
         Send a DHCP packet and recieve the expected response from the server\n
@@ -386,7 +388,7 @@ impl DHCPClient {
         while retry <= max_retry {
             retry += 1
 
-            let ret_packets: Vec<Packet> = send_recv_with_filter(
+            let ret_packets: Vec<packet::Packet> = send_recv_with_filter(
                 packet, recv_filter, PACKET_SNIFF_TIMEOUT, self.iface
             );
 
@@ -409,6 +411,8 @@ impl DHCPClient {
                 }
             }
         }
+
+        packet::Packet::new()
     }
 
     pub fn discover_dhcp_servers(
@@ -431,7 +435,7 @@ impl DHCPClient {
 
         let dhcp_discover = DHCP(dhcp_discover_options);
 
-        let discover_packet = self.packet_base / bootp / dhcp_discover;
+        let discover_packet: Packet = Packet::new(self.packet_base / bootp / dhcp_discover);
 
         let mut dhcp_servers: Vec<usize> = Vec::new();
     
@@ -439,7 +443,7 @@ impl DHCPClient {
 
         for i in 0..max_retry {
             let ret_packets = send_recv_with_filter(
-                discover_packet, filter, PACKET_SNIFF_TIMEOUT, self.iface
+                discover_packet, String::from(filter), PACKET_SNIFF_TIMEOUT, self.iface
             );
 
             for packet in ret_packets {
