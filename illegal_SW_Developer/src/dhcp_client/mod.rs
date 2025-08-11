@@ -386,10 +386,10 @@ impl DHCPClient {
 
         let mut retry= 0;
         while retry <= max_retry {
-            retry += 1
+            retry += 1;
 
             let ret_packets: Vec<Packet> = send_recv_with_filter(
-                packet, recv_filter, PACKET_SNIFF_TIMEOUT, self.iface
+                packet, recv_filter, PACKET_SNIFF_TIMEOUT, self.iface,
             );
 
             // if not ret_packets:
@@ -600,7 +600,7 @@ fn make_from_vector_to_string(v: Vec<String>) -> String{
     result_str
 }
 
-pub fn get_dhcp_option(packet: Packet, option_name: String) -> Vec<char>{
+pub fn get_dhcp_option(packet: Packet, option_name: &'static str) -> Vec<String>{
     let comment= "
     Parse a DHCP packet and extract a specified DHCP option
     :param packet: DHCP packet
@@ -608,9 +608,10 @@ pub fn get_dhcp_option(packet: Packet, option_name: String) -> Vec<char>{
     :return: the content of the specified option
     ";
 
-    let packets= packet[DHCP].options;
+    let options= packet[DHCP].options;
     let mut option_without_first: Vec<char>= Vec::new();
-    for option in packets {
+    for option in options {
+
         if option[0] == option_name{
             for (index, e) in option.as_bytes().iter().enumberate() {
                 if index == 0 {
