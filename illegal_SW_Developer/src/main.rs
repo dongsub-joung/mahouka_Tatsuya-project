@@ -2,6 +2,9 @@ mod spoofer_config;
 mod dhcp_server;
 mod dhcp_coerce;
 mod dhcp_client;
+mod utils;
+mod scapy_utils;
+mod packet;
 
 use clap::Parser;
 

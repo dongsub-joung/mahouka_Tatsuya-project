@@ -13,8 +13,12 @@ https://www.akamai.com/blog/security-research/weaponizing-dhcp-dns-spoofing-hand
 
 ## ref how to)  
 
-rscap - https://crates.io/crates/rscap
-clap - https://docs.rs/clap/latest/clap/
+### CLI
+clap - https://docs.rs/clap/latest/clap/   
+
+### Packet caputre
+pcap - https://docs.rs/pcap/2.3.0/pcap/
+
 
 
 ## moto code as python)  

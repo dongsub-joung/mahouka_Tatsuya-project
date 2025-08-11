@@ -1,32 +1,49 @@
 // from scapy.all import AsyncSniffer, sendp, sniff
 
 use std::{thread, time};
+use pcap::{Device, Packet};
 
-use crate::packet::{self, Packet};
+use std::io::prelude::*;
+use std::net::TcpStream;
 
 
 // return type 後で書く
-pub fn send_recv_with_filter(packet: packet::Packet, filter: String, timeout: usize, iface: String)
--> Vec<packet::Packet>{
+pub fn send_recv_with_filter(packet: Packet, filter: String, timeout: usize, iface: String)
+-> Vec<Packet>{
 
-    let filter=(filter);
-    let iface=iface;
-    let sniffer = AsyncSniffer(
-        filter,
-        iface,
-    );
-
-    sniffer.start();
-
+    let filter= filter.clone();
+    let iface=iface.clone();
     let verbose= false;
-    sendp(packet, iface, verbose);
+    // let sniffer = AsyncSniffer(
+    //     filter,
+    //     iface,
+    // );
+
+    let mut cap = Device::lookup().unwrap().unwrap().open().unwrap();
+
+    let packets_v: Vec<Packet>= Vec::new();
+    while let Ok(packet) = cap.next_packet() {
+        println!("received packet! {:?}", packet);
+        packets_v.push(packet.clone());
+    }
+
+    for packet in packets_v {
+        let sniffer_results= sendp(packet, iface, verbose);
+    }
     
     {
         let timeout = time::Duration::from_millis(timeout as u64);
         thread::sleep(timeout);
     }
 
-    sniffer.stop();
-
-    sniffer.results
+    sniffer_results
 }
+
+fn sendp(packet :Packet, iface: String, verbose: bool, ip: &'static str) -> std::io::Result<Vec<Packet>> {
+
+    let mut stream = TcpStream::connect(ip)?;
+
+    stream.write(&[1])?;
+    stream.read(&mut [0; 128])?;
+    Ok()
+} 
