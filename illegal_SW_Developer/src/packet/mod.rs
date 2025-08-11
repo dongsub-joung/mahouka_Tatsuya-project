@@ -5,6 +5,8 @@ pub trait EnhancePacket {
     fn get_options(&self) -> Vec<Vec<&'static str>>;
 } 
 
+
+#[derive(Clone)]
 pub struct PacketOverride{
     pub header: pcap::PacketHeader,
     pub data: Vec<u8>,

@@ -27,15 +27,13 @@ pub fn generate_random_hex_string(length: usize) -> String {
     hex::encode(bytes)
 }
 
-pub fn ip_to_bytes (ip: String) -> Vec<u8>{
+pub fn ip_to_bytes (ip: String) -> Vec<Vec<u8>>{
     let mut ip_bytes: Vec<Vec<u8>> = Vec::new();
 
     for oct in ip.split("."){
         let oct_int= oct.parse::<i32>().unwrap();
         let byte_oct= Vec::from(oct_int.to_be_bytes());
         ip_bytes.push(byte_oct);
-        
-        ip_bytes
     }
 
     ip_bytes

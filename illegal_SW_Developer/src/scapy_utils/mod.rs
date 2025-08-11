@@ -25,8 +25,9 @@ pub fn send_recv_with_filter(packet: packet::PacketOverride, filter: String, tim
         packets_v.push(packet);
     }
 
-    for packet in packets_v {
-        let sniffer_results= sendp(packet, iface.clone(), verbose, "");
+    
+    for packet in packets_v.iter().clone() {
+        let sniffer_results= sendp(packet.clone(), iface.clone(), verbose, "");
     }
     
     {
