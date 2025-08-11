@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use clap::builder::Str;
-use pcap::Packet;
+// use pcap::Packet;
 use rand::prelude::*;
 use std::{thread, time::Duration};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
@@ -8,8 +8,9 @@ use utf8_decode::Decoder;
 use std::net::UdpSocket;
 
 use crate::dhcp_server::{self, DHCPServer};
-use crate::{utils};
+use crate::{packet, utils};
 use crate::scapy_utils::send_recv_with_filter;
+use crate::packet::*;
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
@@ -447,7 +448,7 @@ impl DHCPClient {
             );
 
             for packet in ret_packets {
-                let message_type_option = get_dhcp_option(packet,DHCP_OPTION_MESSAGE_TYPE)[0];
+                let message_type_option = get_dhcp_option(packet, DHCP_OPTION_MESSAGE_TYPE)[0];
 
                 if message_type_option == DHCP_MESSAGE_TYPE::DHCP_TYPE_OFFER {
                     let dhcp_server_ip = packet[BOOTP].siaddr;
@@ -600,24 +601,24 @@ fn make_from_vector_to_string(v: Vec<String>) -> String{
     result_str
 }
 
-pub fn get_dhcp_option(packet: Packet, option_name: &'static str) -> Vec<String>{
+pub fn get_dhcp_option(packet: packet::PacketOverride, option_name: &'static str) -> Vec<String>{
     let comment= "
     Parse a DHCP packet and extract a specified DHCP option
     :param packet: DHCP packet
     :param option_name: name of the option to extract
     :return: the content of the specified option
     ";
-
-    let options= packet[DHCP].options;
-    let mut option_without_first: Vec<char>= Vec::new();
+    // packet[DHCP] ? IDK packet is a one element, not array
+    let options= packet.get_options();
+    let mut option_without_first: Vec<String>= Vec::new();
     for option in options {
 
         if option[0] == option_name{
-            for (index, e) in option.as_bytes().iter().enumberate() {
+            for (index, e_str) in option.iter().enumerate() {
                 if index == 0 {
                     continue;
                 }else{
-                    option_without_first.push(e);
+                    option_without_first.push(e_str.to_string());
                 }
             }
         }

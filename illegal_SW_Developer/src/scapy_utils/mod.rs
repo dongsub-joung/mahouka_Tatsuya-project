@@ -6,10 +6,12 @@ use pcap::{Device, Packet};
 use std::io::prelude::*;
 use std::net::TcpStream;
 
+use crate::packet::{self, EnhancePacket};
+
 
 // return type 後で書く
-pub fn send_recv_with_filter(packet: Packet, filter: String, timeout: usize, iface: String)
--> Vec<Packet>{
+pub fn send_recv_with_filter(packet: packet::PacketOverride, filter: String, timeout: usize, iface: String)
+-> Vec<packet::PacketOverride>{
 
     let filter= filter.clone();
     let iface=iface.clone();
@@ -17,10 +19,10 @@ pub fn send_recv_with_filter(packet: Packet, filter: String, timeout: usize, ifa
 
     let mut cap = Device::lookup().unwrap().unwrap().open().unwrap();
 
-    let mut packets_v: Vec<Packet>= Vec::new();
+    let mut packets_v= Vec::new();
     while let Ok(packet) = cap.next_packet() {
-        println!("received packet! {:?}", packet);
-        packets_v.push(packet.clone());
+        let packet= packet::PacketOverride::new(packet);
+        packets_v.push(packet);
     }
 
     for packet in packets_v {
@@ -35,7 +37,7 @@ pub fn send_recv_with_filter(packet: Packet, filter: String, timeout: usize, ifa
     return packets_v;
 }
 
-fn sendp(packet :Packet, iface: String, verbose: bool, ip: &'static str) -> std::io::Result<()> {
+fn sendp(packet :packet::PacketOverride, iface: String, verbose: bool, ip: &'static str) -> std::io::Result<()> {
 
     let mut stream = TcpStream::connect(ip)?;
 

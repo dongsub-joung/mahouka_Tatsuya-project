@@ -1,27 +1,30 @@
 use pcap::Packet;
 
-pub struct PacketHeader {
-    /// The time when the packet was captured
-    pub ts: libc::timeval,
-    /// The number of bytes of the packet that are available from the capture
-    pub caplen: u32,
-    /// The length of the packet, in bytes (which might be more than the number of bytes available
-    /// from the capture, if the length of the packet is larger than the maximum number of bytes to
-    /// capture)
-    pub len: u32,
-}
-
 pub trait EnhancePacket {
-    fn get_options(&self);
+    fn new(packet: pcap::Packet) -> Self;
+    fn get_options(&self) -> Vec<Vec<&'static str>>;
 } 
 
 pub struct PacketOverride{
-    pub header: PacketHeader,
-    pub data: [u8; 1024],
-    pub options: Vec<&'static str>,
+    pub header: pcap::PacketHeader,
+    pub data: Vec<u8>,
+    pub options: Vec<Vec<&'static str>>,
 }
 impl EnhancePacket for PacketOverride{
-    fn get_options(){
+    fn new(packet: pcap::Packet) -> Self{
+        let v_v: Vec<Vec<&'static str>> = Vec::from(Vec::new());
+        let data_v:Vec<u8>= {
+            let mut v: Vec<u8>= Vec::new();
+            for e in packet.data{
+                v.push(*e);
+            }
 
+            v
+        };
+        
+        PacketOverride { header: *packet.header, data: data_v, options: v_v }
+    }
+    fn get_options(&self) -> Vec<Vec<&'static str>> {
+        self.options.clone()
     }
 }
