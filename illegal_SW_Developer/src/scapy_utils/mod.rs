@@ -14,10 +14,6 @@ pub fn send_recv_with_filter(packet: Packet, filter: String, timeout: usize, ifa
     let filter= filter.clone();
     let iface=iface.clone();
     let verbose= false;
-    // let sniffer = AsyncSniffer(
-    //     filter,
-    //     iface,
-    // );
 
     let mut cap = Device::lookup().unwrap().unwrap().open().unwrap();
 
@@ -45,5 +41,6 @@ fn sendp(packet :Packet, iface: String, verbose: bool, ip: &'static str) -> std:
 
     stream.write(&[1])?;
     stream.read(&mut [0; 128])?;
+    
     Ok(())
 } 
