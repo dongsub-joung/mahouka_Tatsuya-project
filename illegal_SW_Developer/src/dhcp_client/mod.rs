@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use clap::builder::Str;
+use pcap::Packet;
 use rand::prelude::*;
 use std::{thread, time::Duration};
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
@@ -7,8 +8,7 @@ use utf8_decode::Decoder;
 use std::net::UdpSocket;
 
 use crate::dhcp_server::{self, DHCPServer};
-use crate::packet::Packet;
-use crate::{packet, utils};
+use crate::{utils};
 use crate::scapy_utils::send_recv_with_filter;
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
@@ -388,7 +388,7 @@ impl DHCPClient {
         while retry <= max_retry {
             retry += 1
 
-            let ret_packets: Vec<packet::Packet> = send_recv_with_filter(
+            let ret_packets: Vec<Packet> = send_recv_with_filter(
                 packet, recv_filter, PACKET_SNIFF_TIMEOUT, self.iface
             );
 

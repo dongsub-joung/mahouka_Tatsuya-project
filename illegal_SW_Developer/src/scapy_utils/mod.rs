@@ -21,14 +21,14 @@ pub fn send_recv_with_filter(packet: Packet, filter: String, timeout: usize, ifa
 
     let mut cap = Device::lookup().unwrap().unwrap().open().unwrap();
 
-    let packets_v: Vec<Packet>= Vec::new();
+    let mut packets_v: Vec<Packet>= Vec::new();
     while let Ok(packet) = cap.next_packet() {
         println!("received packet! {:?}", packet);
         packets_v.push(packet.clone());
     }
 
     for packet in packets_v {
-        let sniffer_results= sendp(packet, iface, verbose);
+        let sniffer_results= sendp(packet, iface.clone(), verbose, "");
     }
     
     {
@@ -36,14 +36,14 @@ pub fn send_recv_with_filter(packet: Packet, filter: String, timeout: usize, ifa
         thread::sleep(timeout);
     }
 
-    sniffer_results
+    return packets_v;
 }
 
-fn sendp(packet :Packet, iface: String, verbose: bool, ip: &'static str) -> std::io::Result<Vec<Packet>> {
+fn sendp(packet :Packet, iface: String, verbose: bool, ip: &'static str) -> std::io::Result<()> {
 
     let mut stream = TcpStream::connect(ip)?;
 
     stream.write(&[1])?;
     stream.read(&mut [0; 128])?;
-    Ok()
+    Ok(())
 } 
