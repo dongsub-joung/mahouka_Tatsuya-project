@@ -3,12 +3,13 @@ use clap::builder::Str;
 // use pcap::Packet;
 use rand::prelude::*;
 use std::{thread, time::Duration};
-use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+use std::net::{IpAddr, Ipv4Addr};
 use utf8_decode::Decoder;
 use std::net::UdpSocket;
 
+use crate::bootp::Bootp;
 use crate::dhcp_server::{self, DHCPServer};
-use crate::{packet, utils};
+use crate::{bootp, packet, utils};
 use crate::scapy_utils::send_recv_with_filter;
 use crate::packet::*;
 
@@ -106,7 +107,7 @@ impl DHCPClient {
         :return:\n
         ";
 
-        let bootp = self._initialize_bootp_layer(release_addr, client_id);
+        let bootp = self.initialize_bootp_layer(release_addr, client_id);
 
         let dhcp_options = self._initialize_dhcp_release_options(dhcp_server);
 
@@ -120,8 +121,8 @@ impl DHCPClient {
     }
 
     pub fn dhcp_dora(
-            self, client_id: String, fqdn: String, requested_ip: String, dhcp_server: String
-            , max_retry: usize, fqdn_server_flag: bool, relay_address: &'static str) -> std::option::Option<String> {
+            self, client_id: mac_address::MacAddress, fqdn: String, requested_ip: IpAddr, dhcp_server: IpAddr
+            , max_retry: usize, fqdn_server_flag: bool, relay_address: IpAddr) -> std::option::Option<String> {
 
         const DHCP_DORA_STR_comment: &'static str=
         "\n
@@ -205,8 +206,8 @@ impl DHCPClient {
     }
 
     pub fn initialize_bootp_layer(
-        self, client_address: String, client_id: usize, relay_address: String
-    ) -> BOOTP{
+        self, client_address: IpAddr, client_id: usize, relay_address: IpAddr
+    ) -> bootp::Bootp{
         let relay_address_comment= String::from("\n
         initialize a scapy BOOTP layer for our packets\n
         :param client_address: IP address of the client\n
@@ -215,34 +216,40 @@ impl DHCPClient {
         :return: BOOTP object with the specified data\n
         \n");
         
-        if !relay_address.is_empty() {
-            let op= 1;
-            let chaddr= binascii.unhexlify(client_id);
-            let ciaddr=client_address;
-            let xid= generate_random();
-            let giaddr= relay_address;
+        let my_optional_box: Option<Box<IpAddr>> = Some(Box::new(relay_address));
 
-            // from scapy.all import BOOTP, DHCP, IP, UDP, Ether, Packet, get_if_hwaddr, sendp
-            return BOOTP(
-                op,
-                chaddr,
-                ciaddr,
-                xid,
-                giaddr,
-            );
-        }else{
-            let op= 1;
-            let chaddr= binascii.unhexlify(client_id);
-            let ciaddr= client_address;
-            let xid= generate_random();
+           if let None = my_optional_box {
+                 println!("The optional box is None.");
+                let op= 1;
+                let chaddr= binascii.unhexlify(client_id);
+                let ciaddr= client_address;
+                let xid= generate_random();
 
-            return BOOTP(
-                op,
-                chaddr,
-                ciaddr,
-                xid,
-            );
-        }
+                return bootp::Bootp::new(
+                    op,
+                    chaddr,
+                    ciaddr,
+                    xid,
+                    IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1))
+                );
+            } else if let Some(relay_address) = my_optional_box {
+                let op= 1;
+                let chaddr= binascii.unhexlify(client_id);
+                let ciaddr= client_address;
+                let xid= generate_random();
+                let giaddr= *relay_address;
+
+                // from scapy.all import BOOTP, DHCP, IP, UDP, Ether, Packet, get_if_hwaddr, sendp
+                return bootp::Bootp::new(
+                    op,
+                    chaddr,
+                    ciaddr,
+                    xid,
+                    giaddr,
+                );
+            } else{
+                panic!();
+            }
     }
 
     pub fn initialize_dhcp_discover_options(
@@ -426,7 +433,10 @@ impl DHCPClient {
         :return: A Dictionary with data regarding the DHCP servers found.\n
         \n";
 
-        let bootp = self.initialize_bootp_layer("0.0.0.0", client_id, String::new());
+        let mut relay_address: IpAddr;
+        let bootp = DHCPClient::initialize_bootp_layer(
+            DHCPClient::new(iface, flag, target_server), client_id, String::new(), relay_address 
+        );
 
         let dhcp_discover_options = self.initialize_dhcp_discover_options(
             "", "",
