@@ -209,7 +209,7 @@ impl DHCPClient {
 
     pub fn initialize_bootp_layer(
         self, client_address: IpAddr, client_id: mac_address::MacAddress, relay_address: IpAddr
-    ) -> bootp::Bootp{
+    ) -> Bootp{
         let relay_address_comment= String::from("\n
         initialize a scapy BOOTP layer for our packets\n
         :param client_address: IP address of the client\n
@@ -227,7 +227,7 @@ impl DHCPClient {
                 let ciaddr= client_address;
                 let xid= generate_random();
 
-                return bootp::Bootp::new(
+                return Bootp::new(
                     op,
                     chaddr,
                     ciaddr,
@@ -242,7 +242,7 @@ impl DHCPClient {
                 let giaddr= *relay_address;
 
                 // from scapy.all import BOOTP, DHCP, IP, UDP, Ether, Packet, get_if_hwaddr, sendp
-                return bootp::Bootp::new(
+                return Bootp::new(
                     op,
                     chaddr,
                     ciaddr,
