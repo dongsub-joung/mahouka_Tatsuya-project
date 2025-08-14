@@ -6,12 +6,14 @@ use std::{thread, time::Duration};
 use std::net::{IpAddr, Ipv4Addr};
 use utf8_decode::Decoder;
 use std::net::UdpSocket;
+use mac_address::*;
 
 use crate::bootp::Bootp;
 use crate::dhcp_server::{self, DHCPServer};
-use crate::{bootp, packet, utils};
+use crate::{packet, utils};
 use crate::scapy_utils::send_recv_with_filter;
 use crate::packet::*;
+
 
 const DHCP_TYPE_DISCOVER: &'static str = "discover";
 const DHCP_TYPE_OFFER: &'static str = "offer";
@@ -109,7 +111,7 @@ impl DHCPClient {
 
         let bootp = self.initialize_bootp_layer(release_addr, client_id);
 
-        let dhcp_options = self._initialize_dhcp_release_options(dhcp_server);
+        let dhcp_options = self.initialize_dhcp_release_options(dhcp_server);
 
         // division
         let packet = (self.packet_base) / (bootp) / (DHCP(options=dhcp_options));
@@ -206,7 +208,7 @@ impl DHCPClient {
     }
 
     pub fn initialize_bootp_layer(
-        self, client_address: IpAddr, client_id: usize, relay_address: IpAddr
+        self, client_address: IpAddr, client_id: mac_address::MacAddress, relay_address: IpAddr
     ) -> bootp::Bootp{
         let relay_address_comment= String::from("\n
         initialize a scapy BOOTP layer for our packets\n
