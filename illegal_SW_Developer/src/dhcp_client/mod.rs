@@ -96,7 +96,7 @@ impl DHCPClient {
         self.verbose = verbose;
     }
 
-    pub fn send_release(self, client_id: String, release_addr: String, dhcp_server: String){
+    pub fn send_release(self, client_id: mac_address::MacAddress, release_addr: IpAddr, dhcp_server: String){
         // send_release maybe?
         const DHCP_RELEASE_PACKET_STR_comment: &'static str=
         "
@@ -109,7 +109,9 @@ impl DHCPClient {
         :return:\n
         ";
 
-        let bootp = self.initialize_bootp_layer(release_addr, client_id);
+        let bootp = self.initialize_bootp_layer(
+            release_addr, client_id, IpAddr::V4(Ipv4Addr::new(127, 0, 0, 0))
+        );
 
         let dhcp_options = self.initialize_dhcp_release_options(dhcp_server);
 
