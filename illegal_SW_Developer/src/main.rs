@@ -5,6 +5,7 @@ mod dhcp_client;
 mod utils;
 mod scapy_utils;
 mod packet;
+mod bootp;
 
 use clap::Parser;
 use mac_address::get_mac_address;

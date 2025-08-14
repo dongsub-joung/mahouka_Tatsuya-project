@@ -88,7 +88,8 @@ impl DHCPClient {
         self.iface = iface;
 
         if server_ip.is_none()[
-            self.packet_base = self.get_broadcast_dhcp_packet(get_if_hwaddr(iface))
+            // packet_base= return DHCP Packet
+            self.packet_base = DHCPClient::get_broadcast_dhcp_packet(mac_address::get_mac_address())
         ]else{
             self.packet_base = self.get_unicast_dhcp_packet(get_if_hwaddr(iface), server_ip)
         }
@@ -97,7 +98,6 @@ impl DHCPClient {
     }
 
     pub fn send_release(self, client_id: mac_address::MacAddress, release_addr: IpAddr, dhcp_server: String){
-        // send_release maybe?
         const DHCP_RELEASE_PACKET_STR_comment: &'static str=
         "
         Send a DHCP release packet of a specified IP address. For the release packet to work, the CID of our client must\n
@@ -115,14 +115,13 @@ impl DHCPClient {
 
         let dhcp_options = self.initialize_dhcp_release_options(dhcp_server);
 
-        // division
         let packet = (self.packet_base) / (bootp) / (DHCP(options=dhcp_options));
 
         let iface=self.iface;
         let verbose= false;
 
         // @Todo find return type 
-        return sendp(packet, iface, verbose);
+        return sendp(packet, iface, verbose, "");
     }
 
     pub fn dhcp_dora(
@@ -540,7 +539,7 @@ impl DHCPClient {
         sendp(request_packet, self.iface, verbose);
     }
 
-    fn get_broadcast_dhcp_packet(src_mac: String) -> Packet{
+    fn get_broadcast_dhcp_packet(src_mac: mac_address::MacAddress) -> packet::PacketOverride{
         let comment= "
         create the basic layers for a DHCP packet
         :param src_mac: the source MAC address to send the packet with
@@ -567,6 +566,7 @@ impl DHCPClient {
         let udp = UDP(sport=68, dport=67);
 
 
+        
         eth / ip / udp
     }
 
