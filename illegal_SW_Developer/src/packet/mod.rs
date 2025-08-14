@@ -3,6 +3,7 @@ use pcap::Packet;
 pub trait EnhancePacket {
     fn new(packet: pcap::Packet) -> Self;
     fn get_options(&self) -> Vec<Vec<&'static str>>;
+    fn get_mix_packet(packet_base: pcap::PacketHeader, bootp: Vec<u8>, dhcp_options: Vec<Vec<&'static str>>) -> Self;
 } 
 
 
@@ -28,5 +29,9 @@ impl EnhancePacket for PacketOverride{
     }
     fn get_options(&self) -> Vec<Vec<&'static str>> {
         self.options.clone()
+    }
+
+    fn get_mix_packet(packet_base: pcap::PacketHeader, bootp: Vec<u8>, dhcp_options: Vec<Vec<&'static str>>) -> Self{
+        Self { header: packet_base, data: bootp, options: dhcp_options}
     }
 }
