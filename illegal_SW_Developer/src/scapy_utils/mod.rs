@@ -38,12 +38,22 @@ pub fn send_recv_with_filter(packet: packet::PacketOverride, filter: String, tim
     return packets_v;
 }
 
-fn sendp(packet :packet::PacketOverride, iface: String, verbose: bool, ip: &'static str) -> std::io::Result<()> {
+pub fn sendp(packet :packet::PacketOverride, iface: String, verbose: bool, ip: &'static str) -> std::io::Result<()> {
 
     let mut stream = TcpStream::connect(ip)?;
 
     stream.write(&[1])?;
     stream.read(&mut [0; 128])?;
-    
+
+    match stream {
+        stream => {
+            println!("Successfully connected to the server!");
+            // Perform read/write operations with 'stream'
+        }
+        _ => {
+            eprintln!("An unexpected error occurred during connection.");
+        }
+    };
+
     Ok(())
-} 
+}
