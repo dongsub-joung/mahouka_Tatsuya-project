@@ -13,23 +13,24 @@ fn main() {
     let dns_hosts: Vec<(Vec<u8>, &'static str)>= 
         Vec::from([(google_dns_host, google_ip), (facebook_dns_host, facebook_ip)]);
     
+    let ipt = iptables::new(false).unwrap();
     { // iptable command
         let iptable_command= 
             format!("iptables -I FORWARD -j NFQUEUE --queue-num {}", QUEUE_NUM);
-        let ipt = iptables::new(false).unwrap();
         ipt.new_chain("nat", "NEWCHAINNAME");
         ipt.append("nat", "NEWCHAINNAME", &iptable_command);
     }
 
     { // NetFilterQueue
         let mut q = nfqueue::Queue::new();
-
+        let callback= process_packet();
+        
         q.open();
 
         let rc = q.bind(libc::AF_INET);
-        assert!(rc == 0);
+        assert!(rc == QUEUE_NUM);
 
-        q.create_queue(0, callback);
+        q.create_queue(QUEUE_NUM, callback);
         q.set_mode(nfqueue::CopyMode::CopyPacket, 0xffff);
 
         q.set_callback(callback);
@@ -37,4 +38,7 @@ fn main() {
 
         q.close();
     }
+
+
+    ipt.delete_chain("nat", "NEWCHAINNAME")
 }
