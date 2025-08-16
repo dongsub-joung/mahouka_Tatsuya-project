@@ -1,6 +1,14 @@
+extern crate packet;
+
 use libc::*;
 use nfqueue::*;
 use std::fmt::Write;
+use packet::builder::Builder;
+use packet::icmp;
+
+fn process_packet(packet: Vec<u8>){
+    
+}
 
 fn main() {
     const QUEUE_NUM: usize = 0;
@@ -12,14 +20,6 @@ fn main() {
 
     let dns_hosts: Vec<(Vec<u8>, &'static str)>= 
         Vec::from([(google_dns_host, google_ip), (facebook_dns_host, facebook_ip)]);
-    
-    let ipt = iptables::new(false).unwrap();
-    { // iptable command
-        let iptable_command= 
-            format!("iptables -I FORWARD -j NFQUEUE --queue-num {}", QUEUE_NUM);
-        ipt.new_chain("nat", "NEWCHAINNAME");
-        ipt.append("nat", "NEWCHAINNAME", &iptable_command);
-    }
 
     { // NetFilterQueue
         let mut q = nfqueue::Queue::new();
