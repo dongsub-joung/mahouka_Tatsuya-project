@@ -4,7 +4,7 @@ use nfq::Message;
 
 
 pub trait EnhanceQueue{
-    fn new(packet: Queue) -> Self;
+    fn new(queue: Queue) -> Self;
 }
 
 pub struct QueueOverride{
