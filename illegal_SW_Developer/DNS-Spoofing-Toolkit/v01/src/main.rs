@@ -5,7 +5,7 @@ fn process_packet(packet: Vec<u8>){
 }
 
 fn main() -> std::io::Result<()> {
-    const QUEUE_NUM: usize = 0;
+    const QUEUE_NUM: u16 = 0;
 
     let (google_dns_host, google_ip)= 
         (b"www.google.com.".to_vec(), "192.168.1.100"); 
@@ -15,7 +15,6 @@ fn main() -> std::io::Result<()> {
     let dns_hosts: Vec<(Vec<u8>, &'static str)>= 
         Vec::from([(google_dns_host, google_ip), (facebook_dns_host, facebook_ip)]);
 
-    const QUEUE_NUM: usize= 0;
     {
         let mut queue: Queue= Queue::open()?;
 
