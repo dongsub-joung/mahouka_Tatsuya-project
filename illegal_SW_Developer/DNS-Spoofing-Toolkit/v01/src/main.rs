@@ -15,9 +15,12 @@ fn main() -> std::io::Result<()> {
     let dns_hosts: Vec<(Vec<u8>, &'static str)>= 
         Vec::from([(google_dns_host, google_ip), (facebook_dns_host, facebook_ip)]);
 
+    const QUEUE_NUM: usize= 0;
     {
-        let mut queue = Queue::open()?;
-        queue.bind(0)?;
+        let mut queue: Queue= Queue::open()?;
+
+        queue.bind(QUEUE_NUM)?;
+
         loop {
             let mut msg = queue.recv()?;
             msg.set_verdict(Verdict::Accept);
