@@ -5,19 +5,20 @@ use nfq::Message;
 
 pub trait EnhanceQueue{
     fn new(packet: QueueOverride) -> Self;
+    fn get_payload(self) -> [u8];
 }
 
-#[derive(Copy)]
-pub struct QueueOverride<'a>{
+pub struct QueueOverride{
     packet: Message,
-    payload: &'a [u8],
 }
 
-impl EnhanceQueue for QueueOverride<'_>{
+impl EnhanceQueue for QueueOverride{
     fn new(queue: QueueOverride) -> Self {
         QueueOverride {
             packet : queue.packet, 
-            payload : queue.packet.get_payload(),
         }
+    }
+    fn get_payload(self) -> [u8] {
+        self.get_payload()
     }
 }
