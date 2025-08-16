@@ -1,8 +1,4 @@
-mod queue_overroding;
-
 use nfq::{Queue, Verdict};
-
-use crate::queue_overroding::EnhanceQueue;
 
 fn main() -> std::io::Result<()> {
     const QUEUE_NUM: u16 = 0;
@@ -18,12 +14,16 @@ fn main() -> std::io::Result<()> {
     {
         let mut queue: Queue= Queue::open()?;
 
-        // @Todo use bind function some modified payloads
-        let overrided_queue= queue_overroding::QueueOverride::new(queue);
         queue.bind(QUEUE_NUM)?;
 
         loop {
             let mut msg = queue.recv()?;
+        
+            { // @Todo use bind function some modified payloads
+                let payload= msg.get_payload();
+
+            }
+
             msg.set_verdict(Verdict::Accept);
             queue.verdict(msg)?;
         }
