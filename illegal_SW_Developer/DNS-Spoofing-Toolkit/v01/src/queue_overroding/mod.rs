@@ -5,7 +5,7 @@ use nfq::Message;
 
 pub trait EnhanceQueue{
     fn new(packet: QueueOverride) -> Self;
-    fn get_payload(self) -> [u8];
+    fn get_payload(self) -> &'static mut [u8];
 }
 
 pub struct QueueOverride{
@@ -18,7 +18,7 @@ impl EnhanceQueue for QueueOverride{
             packet : queue.packet, 
         }
     }
-    fn get_payload(self) -> [u8] {
+    fn get_payload(self) -> &'static mut [u8] {
         self.get_payload()
     }
 }
