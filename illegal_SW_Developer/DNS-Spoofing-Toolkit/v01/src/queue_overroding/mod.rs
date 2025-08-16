@@ -4,20 +4,37 @@ use nfq::Message;
 
 
 pub trait EnhanceQueue{
-    fn new(packet: QueueOverride) -> Self;
-    fn get_payload(self) -> &'static mut [u8];
+    fn new(packet: Queue) -> Self;
 }
 
 pub struct QueueOverride{
-    packet: Message,
+    queue: Queue,
 }
 
 impl EnhanceQueue for QueueOverride{
-    fn new(queue: QueueOverride) -> Self {
+    fn new(queue: Queue) -> Self {
         QueueOverride {
-            packet : queue.packet, 
+            queue: queue, 
         }
     }
+}
+
+
+
+pub trait EnhanceMessage{
+    fn new(packet: Message) -> Self;
+    fn get_payload(self) -> &'static mut [u8];
+}
+
+pub struct MessageOverride{
+    packet: Message,
+}
+
+impl EnhanceMessage for MessageOverride {
+    fn new(message: Message) -> Self{
+        MessageOverride { packet: message }
+    }
+
     fn get_payload(self) -> &'static mut [u8] {
         self.get_payload()
     }
