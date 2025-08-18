@@ -20,12 +20,15 @@ fn main() -> std::io::Result<()> {
             let mut msg = queue.recv()?;
         
             { // @Todo use bind function some modified payloads
-                let payload: Vec<u8>= Vec::new(); 
+                let mut payload: Vec<u8>= Vec::new(); 
                 // @Todo2 How to modified payload
                 msg.set_payload(payload);
             }
 
             msg.set_verdict(Verdict::Accept);
+
+            println!("listening... {:?}", msg);
+
             queue.verdict(msg)?;
         }
     }
