@@ -11,7 +11,7 @@ fn restore(){
 
 }
 
-fn find_ethnet(ip_addrs: Vec<?>){
+fn selete_adapter(ip_addrs: Vec<?>) -> ? {
 
 }
 
@@ -30,7 +30,7 @@ fn main() {
     if mac_addr.is_none() {
         println!("Unknown OS or Unable OS");
     }else{
-        let ethernet_ip= find_ethnet(ip_addrs);
+        let selected_ip= selete_adapter(ip_addrs);
         
         // null is handled by is_none(Always true)
         let mac_addr= mac_addr.unwrap();
