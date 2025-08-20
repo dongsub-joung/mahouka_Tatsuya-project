@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+ipconfig = "0.3.2"
+mac_address = "1.1.8"
+pnet_packet = "0.35.0"
