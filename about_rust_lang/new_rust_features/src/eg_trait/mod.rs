@@ -1,6 +1,6 @@
 
 pub trait Example {
-    // "located in Stack or CPU registers as inline" Google Gemini notice  
+    // "using the Stack (often on the Stack or CPU registers) as inline(The Data Segment)" Google Gemini notice  
     const CONST_NO_DEFAULT: i32;
     const CONST_WITH_DEFAULT: i8 = 2;
     type TypeNoDefault;
