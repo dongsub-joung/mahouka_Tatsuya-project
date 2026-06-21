@@ -16,8 +16,9 @@ class KeyboardHandler
 
   def send_buffer()
     begin
-      if @buffer.size() >= 20
+      if @buffer.size() >= 30
         # send buffer
+        @buffer= []
     rescue -> e 
       @buffer= []
       puts "#{e}: buffer size err"
@@ -28,10 +29,9 @@ end
 # itit
 # new set keyboard object up 
 keyboard_obj= KeyboardObj.new()
+# handle that input
+keyboard_handler= KeyboardHandler.new(one_keyboard_obj)
 
-loop
-  # handle that input
-  keyboard_handler= KeyboardHandler.new(one_keyboard_obj)
-
-  
+do
+  keyboard_handler.send_buffer()
 end
