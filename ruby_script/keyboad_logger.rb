@@ -8,19 +8,30 @@ class KeyboardObj
 end
 
 class KeyboardHandler
-  attr_accessor a_key
+  attr_accessor buffer
   
   def initialize(one_keyboad_obj)
-    @a_key= one_keyboad_obj
+    @buffer= one_keyboad_obj
+  end
+
+  def send_buffer()
+    begin
+      if @buffer.size() >= 20
+        # send buffer
+    rescue -> e 
+      @buffer= []
+      puts "#{e}: buffer size err"
+    end
   end
 end
 
 # itit
+# new set keyboard object up 
+keyboard_obj= KeyboardObj.new()
+
 loop
-  # new set keyboard object up 
-  keyboard_obj= KeyboardObj.new()
   # handle that input
-  keyboard_handler= KeyboardHandler.new(keyboard_obj)
-  
+  keyboard_handler= KeyboardHandler.new(one_keyboard_obj)
+
   
 end
