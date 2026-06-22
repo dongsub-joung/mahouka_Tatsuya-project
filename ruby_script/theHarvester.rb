@@ -1,8 +1,4 @@
 class Data
-  def initialize()
-    return self
-  end
-  
   def set_data(gethered_data)
     # @TODO migration bot's data -> Data obj
   end
@@ -11,6 +7,14 @@ end
 class Havester
     attr_accessor nickname
     attr_accessor url
+    
+    class Bot
+      def get_data()
+        response= request.get_url(self.nickname, self.url)
+        # @TODO handle response as Data format
+        return data
+    end
+
 
     def initialize(_user_nickname)
         @nickname= _user_nickname
@@ -21,7 +25,7 @@ class Havester
     end
     
     def crowing_bot()
-      bot= bot.new(@nickname, @url)
+      bot= self.Bot.new()
       
       begin
         bot.init
